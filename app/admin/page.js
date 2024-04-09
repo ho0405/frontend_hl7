@@ -187,12 +187,20 @@ const AdminDashboard = () => {
                 Activity History
               </h2>
               <ul>
-  {activityHistory.map(({ id, userEmail, activityType, fileName, timestamp }) => (
-    <li key={id}>
-      {userEmail} - {activityType} - {fileName} - {new Date(timestamp.seconds * 1000).toLocaleString()}
-    </li>
-  ))}
+  {activityHistory.map(({ id, userEmail, activityType, fileName, timestamp }) => {
+    
+    const displayTimestamp = timestamp.seconds
+      ? new Date(timestamp.seconds * 1000).toLocaleString() 
+      : new Date(timestamp).toLocaleString();
+
+    return (
+      <li key={id}>
+        {userEmail} - {activityType} - {fileName} - {displayTimestamp}
+      </li>
+    );
+  })}
 </ul>
+
 
             </div>
           )
