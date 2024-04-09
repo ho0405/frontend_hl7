@@ -6,6 +6,18 @@ import { useRouter } from 'next/navigation';
 import { Avatar, Progress } from "@material-tailwind/react";
 import LiveChatbot from '../chatbot/page';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import { db, auth } from "../_utils/firebase"; // Adjust this path as needed
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+  deleteDoc,
+  doc
+} from "firebase/firestore";
+ 
 
 const HomePage = () => {
   const { user, logOut } = UserAuth();
@@ -108,10 +120,31 @@ const HomePage = () => {
     setDownloadModalOpen(true);
   };
 
-  const handleDownloadConfirm = () => {
+  const handleDownloadConfirm = async () => {
+    // Close the download modal
     setDownloadModalOpen(false);
+  
+    // Proceed with file conversion and download
     handleConvert();
+  
+    // Check if the user is logged in
+    if (user) {
+      try {
+        // Record the activity history in Firestore with timestamp
+        await addDoc(collection(db, "activityHistory"), {
+          userEmail: user.email, // Or any other user identifier
+          activityType: "Download",
+          fileName: selectedFile ? selectedFile.name : "unknown", // Check if file is selected
+          timestamp: serverTimestamp(), // Capture the server-side timestamp of the activity
+        });
+  
+        console.log("Activity history recorded successfully.");
+      } catch (error) {
+        console.error("Error recording activity history:", error);
+      }
+    }
   };
+  
 
   const handleDownloadCancel = () => {
     setDownloadModalOpen(false);

@@ -7,60 +7,53 @@ import { db } from '../_utils/firebase';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 
 const AdminDashboard = () => {
-  const { logOut } = UserAuth();
+  const { user, logOut } = UserAuth();
   const router = useRouter();
   const [loginHistory, setLoginHistory] = useState([]);
   const [activityHistory, setActivityHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [displayContent, setDisplayContent] = useState(null); // State variable to track which content to display
-  const [isDarkMode, setIsDarkMode] = useState(false); 
+  const [displayContent, setDisplayContent] = useState('loginHistory'); // Initialize display to 'loginHistory'
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   
 
   useEffect(() => {
-    const fetchLoginHistory = async () => {
-      try {
-        const loginHistoryQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
-        const loginHistorySnapshot = await getDocs(loginHistoryQuery);
-        const loginHistoryData = loginHistorySnapshot.docs.map(doc => ({
+    setLoading(true);
+    const fetchHistory = async () => {
+      const loginQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
+      getDocs(loginQuery).then(loginSnapshot => {
+        const loginData = loginSnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
+          timestamp: doc.data().timestamp.toDate(), // Ensuring timestamp conversion for display
         }));
-        console.log("Login History Data:", loginHistoryData); 
-        setLoginHistory(loginHistoryData);
-      } catch (error) {
+        setLoginHistory(loginData);
+      }).catch(error => {
         console.error('Failed to fetch login history:', error);
-      }
-      handleDisplayLoginHistory();
-    };
-    
-  
-    const fetchActivityHistory = async () => {
-      try {
-        const activityHistoryQuery = query(collection(db, 'activityHistory'), orderBy('email', 'timestamp'));
-        const activityHistorySnapshot = await getDocs(activityHistoryQuery);
-        const activityHistoryData = activityHistorySnapshot.docs.map(doc => ({
+      });
+
+      const activityQuery = query(collection(db, 'activityHistory'), orderBy('timestamp', 'desc'));
+      getDocs(activityQuery).then(activitySnapshot => {
+        const activityData = activitySnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
+          timestamp: doc.data().timestamp.toDate(), // Ensuring timestamp conversion for display
         }));
-        setActivityHistory(activityHistoryData);
-      } catch (error) {
+        setActivityHistory(activityData);
+      }).catch(error => {
         console.error('Failed to fetch activity history:', error);
-      } finally {
-        setLoading(false);
-      }
+      }).finally(() => setLoading(false));
     };
-  
-    fetchLoginHistory();
-    fetchActivityHistory();
+
+    fetchHistory();
   }, []);
-  
+
   const handleSignOut = async () => {
     try {
-      await logOut(); 
+      await logOut();
       router.push('/');
     } catch (error) {
-      console.error('Logout failed', error);
+      console.error('Logout failed:', error);
     }
   };
 
@@ -180,12 +173,12 @@ const AdminDashboard = () => {
                 Login History
               </h2>
               <ul>
-              {loginHistory.map((item, index) => (
-                <li key={index} className="mb-2">
-                  {item.email} - {item.timestamp.toDate().toLocaleString()}
-                </li>
-              ))}
-              </ul>
+  {loginHistory.map((item, index) => (
+    <li key={index} className="mb-2">
+      {item.email} - {item.timestamp instanceof Date ? item.timestamp.toLocaleString() : new Date(item.timestamp.seconds * 1000).toLocaleString()}
+    </li>
+  ))}
+</ul>
             </div>
           ) ||
           displayContent === 'activityHistory' && (
@@ -194,12 +187,13 @@ const AdminDashboard = () => {
                 Activity History
               </h2>
               <ul>
-                {activityHistory.map((item, index) => (
-                  <li key={index} className="mb-2">
-                    {item.action} - {item.timestamp}
-                  </li>
-                ))}
-              </ul>
+  {activityHistory.map(({ id, userEmail, activityType, fileName, timestamp }) => (
+    <li key={id}>
+      {userEmail} - {activityType} - {fileName} - {new Date(timestamp.seconds * 1000).toLocaleString()}
+    </li>
+  ))}
+</ul>
+
             </div>
           )
         )}
