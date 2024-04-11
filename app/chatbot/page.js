@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../_utils/firebase"; // Adjust this path as needed
+import { db, auth } from "../_utils/firebase"; 
 import {
   collection,
   addDoc,
@@ -11,7 +11,7 @@ import {
   deleteDoc,
   doc
 } from "firebase/firestore";
-import { UserAuth } from "../context/AuthContext"; // Adjust this path as needed
+import { UserAuth } from "../context/AuthContext"; 
 
 const LiveChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
