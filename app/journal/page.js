@@ -15,7 +15,10 @@ import {
   query,
   orderBy,
   deleteDoc,
-  doc
+  doc,
+  where,
+  getDocs,
+  limit
 } from "firebase/firestore";
  
 
@@ -47,12 +50,37 @@ const HomePage = () => {
 
   const handleSignOut = async () => {
     try {
+      const email = user.email;
+      const serverLogoutTime = serverTimestamp(); 
+  
+      const lastLoginQuery = query(
+        collection(db, 'logins'),
+        where('email', '==', email),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+      const lastLoginSnapshot = await getDocs(lastLoginQuery);
+      const lastLoginData = lastLoginSnapshot.docs.map(doc => doc.data())[0];
+  
+      if (lastLoginData) {
+        const loginTime = lastLoginData.timestamp.toDate(); 
+  
+        await addDoc(collection(db, "logins"), {
+          email: email,
+          // loginTime: loginTime,
+          logoutTime: serverLogoutTime, 
+          timeDifferenceMinutes: (new Date().getTime() - loginTime.getTime()) / (1000 * 60) 
+        });
+      }
+  
       await logOut();
       router.push('/');
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
+  
+  
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];

@@ -50,73 +50,27 @@ const AdminDashboard = () => {
     fetchHistory();
   }, []);
 
+  useEffect(() => {
+  const fetchLogoutHistory = async () => {
+    try {
+      const logoutHistoryQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
+      const logoutHistorySnapshot = await getDocs(logoutHistoryQuery);
+      const logoutHistoryData = logoutHistorySnapshot.docs.map(doc => ({
+        email: doc.data().email,
+        logoutTime: doc.data().logoutTime, 
+        timeDifferenceMinutes: doc.data().timeDifferenceMinutes
+      }));
+      console.log("Logout History Data:", logoutHistoryData);
+      setLogoutHistory(logoutHistoryData);
+    } catch (error) {
+      console.error('Failed to fetch logout history:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchLogoutHistory();
+}, []);
 
-    // const fetchLoginHistory = async () => {
-    //   try {
-    //     const loginHistoryQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
-    //     const loginHistorySnapshot = await getDocs(loginHistoryQuery);
-    //     const loginHistoryData = loginHistorySnapshot.docs.map(doc => ({
-    //       id: doc.id,
-    //       ...doc.data()
-    //     }));
-    //     setLoginHistory(loginHistoryData);
-    //   } catch (error) {
-    //     console.error('Failed to fetch login history:', error);
-    //   }
-    //   handleDisplayLoginHistory();
-    // };
-
-    
-    
-    useEffect(() => {
-      const fetchLogoutHistory = async () => {
-        try {
-          const logoutHistoryQuery = query(collection(db, 'logouts'), orderBy('timestamp', 'desc'));
-          const logoutHistorySnapshot = await getDocs(logoutHistoryQuery);
-          const logoutHistoryData = logoutHistorySnapshot.docs.map(doc => ({
-            id: doc.id,
-            email: doc.data().email,
-            logoutTime: doc.data().logoutTime, 
-          }));
-          // Calculate time difference
-          logoutHistoryData.forEach(item => {
-            const timeDifference = (new Date() - item.logoutTime.getTime()) / (1000 * 60);
-            item.timeDifferenceMinutes = Math.abs(timeDifference);
-          });
-          console.log("Logout History Data:", logoutHistoryData);
-          setLogoutHistory(logoutHistoryData);
-        } catch (error) {
-          console.error('Failed to fetch logout history:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchLogoutHistory();
-      
-    }, []);
-    
-
-
-  //   const fetchActivityHistory = async () => {
-  //     try {
-  //       const activityHistoryQuery = query(collection(db, 'activityHistory'), orderBy('email'));
-  //       const activityHistorySnapshot = await getDocs(activityHistoryQuery);
-  //       const activityHistoryData = activityHistorySnapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data()
-  //       }));
-  //       setActivityHistory(activityHistoryData);
-  //     } catch (error) {
-  //       console.error('Failed to fetch activity history:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  
-  //   fetchLoginHistory();
-  //   fetchLogoutHistory(); 
-  //   fetchActivityHistory();
-  // }, []);
   
   const handleSignOut = async () => {
     try {
@@ -247,26 +201,19 @@ const AdminDashboard = () => {
                 Login History
               </h2>
               <ul>
-              {loginHistory.map((item, index) => (
-                <li key={index} className="mb-2">
-                  {item.email} - {item.timestamp instanceof Date ? item.timestamp.toLocaleString() : new Date(item.timestamp.seconds * 1000).toLocaleString()}
-                </li>
+              {loginHistory.slice(0, showMore ? loginHistory.length : 10).map((item, index) => (
+              <li key={index} className="mb-2">
+                {item.email} - {item.timestamp instanceof Date ? item.timestamp.toLocaleString() : new Date(item.timestamp.seconds * 1000).toLocaleString()}
+              </li>
               ))}
               </ul>
-              {showMore ? (
-                <button
-                  className="text-blue-500 hover:text-blue-700"
-                  onClick={handleShowLess}
-                >
-                  Show Less
-                </button>
-              ) : (
-                <button
-                  className="text-blue-500 hover:text-blue-700"
-                  onClick={handleShowMore}
-                >
-                  Show More
-                </button>
+              {loginHistory.length > 10 && (
+              <button
+                className="text-blue-500 hover:text-blue-700"
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? 'Show Less' : 'Show More'}
+              </button>
               )}
             </div>
           ) ||
@@ -277,10 +224,11 @@ const AdminDashboard = () => {
               </h2>
               <ul>
               {logoutHistory.map((item, index) => ( 
-                <li key={index} className="mb-2">
-                  {item.email} - {item.logoutTime.toLocaleString()} - {item.timeDifferenceMinutes.toFixed(2)} minutes ago
-                </li>
-              ))}
+  <li key={index} className="mb-2">
+    {item.email} - {item.logoutTime ? item.logoutTime.toLocaleString() : 'Unknown'} - {item.timeDifferenceMinutes ? item.timeDifferenceMinutes.toFixed(2) : 'N/A'} minutes ago
+  </li>
+))}
+
               </ul>
             </div>
           ) ||
@@ -303,6 +251,21 @@ const AdminDashboard = () => {
                 );
               })}
               </ul>
+              {showMore ? (
+                <button
+                  className="text-blue-500 hover:text-blue-700"
+                  onClick={handleShowLess}
+                >
+                  Show Less
+                </button>
+              ) : (
+                <button
+                  className="text-blue-500 hover:text-blue-700"
+                  onClick={handleShowMore}
+                >
+                  Show More
+                </button>
+              )}
             </div>
           )
         )}
@@ -331,6 +294,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
-
-///test
