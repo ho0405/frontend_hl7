@@ -54,7 +54,7 @@ const LiveChatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed inset-0 flex justify-center items-center z-50">
       {!isOpen && (
         <button onClick={() => setIsOpen(true)} className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center">
           <img src="/images/chatbot.png" alt="Chatbot" className="h-12 w-14" />

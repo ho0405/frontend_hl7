@@ -1,20 +1,22 @@
 'use client'
-import { useState } from "react";
-import React from 'react';
-import Link from "next/link";
-import ThemeSwitcher from './ThemeSwitcher';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import ThemeSwitcher from '../components/ThemeSwitcher';
+import LiveChatbot from '../chatbot/page';
 
-const NavvBar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false); 
+
+const HomePage = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
   
-  const bgClass = isDarkMode ? 'bg-gray-800 text-white' : ' text-black';
+  const bgClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gradient-to-r from-blue-300 to-purple-300 text-black';
   const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
 
   return (
+    <div className="p-4 shadow-inner">
     <div className={`flex flex-col min-h-screen ${bgClass}`}>
       <nav className={`p-4 shadow-md rounded-lg mt-4 mx-10 ${cardClass}`}>
         <div className="flex justify-between items-center">
@@ -31,10 +33,11 @@ const NavvBar = () => {
         </div>
       </nav>
     </div>
+
+    {/* Footer content */}
+    <LiveChatbot />
+    </div>
   );
 };
 
-export default NavvBar;
-
-
-
+export default HomePage;
