@@ -25,7 +25,7 @@ const HomePage = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-            <Image src="/images/logo.png" alt="Logo" width={28} height={12} className="mr-4" />
+              <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4 cursor-pointer" />
             </Link>
           </div>
           <div className="flex items-center space-x-6">
