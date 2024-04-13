@@ -228,28 +228,28 @@ const HomePage = () => {
     <div className="max-w-6xl mx-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-10">
       {/* Feature 1: Automated PDF to HL7 Conversion */}
       <div className={`flex flex-col items-center text-center space-y-2 ${textColorClass}`}>
-        <span className="text-3xl">📄➡️🏥</span>
+        <span className="text-3xl"><img src="images/convert.png" alt="convert" /></span>
         <h3 className="text-lg font-semibold">Automated PDF to HL7 Conversion</h3>
         <p>Transform your laboratory and hospital data workflows with our cutting-edge tool that converts PDF documents into HL7 format effortlessly and accurately.</p>
       </div>
 
       {/* Feature 2: Smart Data Extraction */}
       <div className={`flex flex-col items-center text-center space-y-2 ${textColorClass}`}>
-        <span className="text-3xl">🧠</span>
+        <span className="text-3xl"><img src="images/smart.png" alt="smart" /></span>
         <h3 className="text-lg font-semibold">Smart Data Extraction</h3>
         <p>Our advanced algorithms ensure precise extraction of checkboxes and patient information, turning manual entries into a thing of the past.</p>
       </div>
 
       {/* Feature 3: Seamless Integration */}
       <div className={`flex flex-col items-center text-center space-y-2 ${textColorClass}`}>
-        <span className="text-3xl">🔗</span>
+        <span className="text-3xl"><img src="images/link.png" alt="Link" /></span>
         <h3 className="text-lg font-semibold">Seamless Integration</h3>
         <p>Easily integrate our solution with existing hospital and laboratory information systems to streamline data processing and improve interoperability.</p>
       </div>
 
       {/* Feature 4: User-Friendly Platform */}
       <div className={`flex flex-col items-center text-center space-y-2 ${textColorClass}`}>
-        <span className="text-3xl">👩‍💻</span>
+        <span className="text-3xl"><img src="images/trust.png" alt="trust" /></span>
         <h3 className="text-lg font-semibold">User-Friendly Platform</h3>
         <p>Our platform is designed with the user in mind, making it incredibly easy to use. Convert your files online without any need for software installation.</p>
       </div>
@@ -257,9 +257,10 @@ const HomePage = () => {
   
   {/* Conversion API Section */}
   <div className="mt-10 text-center">
-    <h3 className="text-lg font-semibold ${textColorClass}">Conversion API</h3>
-    <p className={`${textColorClass}`}>With passion to Developers</p>
-    <div className="flex justify-center space-x-4 mt-4">
+  <img src="images/api.png" alt="api" className="mx-auto d-block text-3xl" />
+  <h3 className={`text-lg font-semibold ${textColorClass}`}>Conversion API</h3>
+  <p className={`${textColorClass}`}>With passion to Developers</p>
+  <div className="flex justify-center space-x-4 mt-4">
       <button className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>Documentation</button>
       <button className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>PHP Example</button>
       <button className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>Get an API Key</button>
