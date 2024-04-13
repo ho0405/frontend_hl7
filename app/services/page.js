@@ -5,7 +5,7 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import Footer from '../penguinChatbot/footer';
 import ServicesPage from '../components/servicespage';
 
-function servicePage() {
+function ServicePage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
   const toggleDarkMode = () => {
@@ -47,4 +47,4 @@ function servicePage() {
   );
 }
 
-export default servicePage;
+export default ServicePage;

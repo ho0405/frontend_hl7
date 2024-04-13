@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
-
+import Image from 'next/image';
 const ContactCard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
@@ -67,7 +67,7 @@ const ContactCard = () => {
         <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
           <Link href="https://mypureform.com/" passHref>
             <div className="flex items-center justify-center p-2 bg-gray-200 cursor-pointer">
-              <img className="h-12" src="/images/logo.png" alt="Company Logo" />
+            <Image src="/images/logo.png" alt="Logo" width={28} height={12} className="mr-4" />
             </div>
           </Link>
           <div className="flex">

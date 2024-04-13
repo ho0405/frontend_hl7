@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import LiveChatbot from '../chatbot/page'; // Ensure this import path is correct
 import Footer from '../penguinChatbot/footer';
+import Image from 'next/image';
 
 const HomePage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -24,7 +25,7 @@ const HomePage = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4 cursor-pointer" />
+            <Image src="/images/logo.png" alt="Logo" width={28} height={12} className="mr-4" />
             </Link>
           </div>
           <div className="flex items-center space-x-6">

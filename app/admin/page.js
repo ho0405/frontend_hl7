@@ -7,6 +7,8 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import { UserAuth } from '../context/AuthContext';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import Image from 'next/image';
+
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -111,7 +113,8 @@ const AdminDashboard = () => {
     <div className={`flex flex-col min-h-screen ${bgClass}`}>
       <nav className={`p-4 shadow-md rounded-lg mt-4 mx-10 ${cardClass}`}>
         <div className="flex justify-between items-center">
-          <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4" />
+        <Image src="/images/logo.png" alt="Logo" width={28} height={12} className="mr-4" />
+
           <div className="flex items-center space-x-4">
             <button onClick={handleSignOut} className="px-4 py-2 rounded-md bg-blue-500 text-white transition duration-300 hover:bg-transparent hover:border-blue-500 hover:text-blue-500 border-2 border-transparent">
               Sign Out
