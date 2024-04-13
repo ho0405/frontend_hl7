@@ -23,7 +23,8 @@ const HomePage = () => {
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loginTime, setLoginTime] = useState(null);
-
+  const [dragging, setDragging] = useState(false);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -69,7 +70,8 @@ const HomePage = () => {
   
 
   const handleFileUpload = (event) => {
-    const file = event.target.files[0];
+    const files = event.target.files || event.dataTransfer.files; // Handle files from input or drop
+    const file = files[0];
     if (file && file.type === 'application/pdf') {
       setSelectedFile(file);
       setFileError('');
@@ -77,6 +79,27 @@ const HomePage = () => {
       setSelectedFile(null);
       setFileError('Please upload a PDF file.');
     }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault(); // Necessary to allow drop
+    if (!dragging) setDragging(true);
+  };
+
+  const handleDragEnter = (event) => {
+    event.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setDragging(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    setDragging(false);
+    handleFileUpload(event); // Reuse the file upload handler
   };
 
   const handleConvert = () => {
@@ -178,25 +201,25 @@ const HomePage = () => {
   const textColorClass = isDarkMode ? 'text-gray-300' : 'text-gray-900';
   
   return (
-    <div className={`flex flex-col min-h-screen ${bgClass}`}>
+    <div className={`flex flex-col min-h-screen ${bgClass}`} onDragOver={handleDragOver} onDrop={handleDrop}>
       <nav className={`p-5 shadow-md rounded-lg mt-5 mx-5 ${cardClass}`}>
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-          <Link href="/">
-          <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4 cursor-pointer" />
-        </Link>
+            <Link href="/">
+              <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4 cursor-pointer" />
+            </Link>
           </div>
           <div className="flex items-center space-x-6">
             <Link href="/" className="hover:text-blue-500">Home</Link>
             <Link href="/journal" className="hover:text-blue-500">Convert</Link>
             <Link href="/services" className="hover:text-blue-500">Services</Link>
-            <Link href="/connect" className="hover:text-blue-500">Connect Us</Link>
+            <Link href="/connect" className="hover:text-blue-500">Contact Us</Link>
             <Link href="/communicate" className="hover:text-blue-500">Communicate</Link>
             <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
           </div>
         </div>
       </nav>
-
+  
       <div className="flex-grow p-5">
         <div className="flex justify-center items-start space-x-5">
           {/* Profile section */}
@@ -208,11 +231,11 @@ const HomePage = () => {
               Sign Out
             </button>
           </div>
-            {/* Converting section */}
-            <div className={`flex-1 p-10 rounded-lg shadow-lg ${cardClass}`} style={{ padding: "15vh 1vw" }}>
+          {/* Converting section */}
+          <div className={`flex-1 p-10 rounded-lg shadow-lg ${cardClass}`} style={{ padding: "15vh 1vw" }}>
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-center text-black mb-20">
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Convert to HL7</h1>
+                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Convert to HL7</h1>
                 <div className="mt-8">
                   <label htmlFor="fileUpload" className={`text-lg bg-blue-300 border-2 border-white px-6 py-3 rounded-lg hover:bg-white hover:text-blue-500 transition duration-300 cursor-pointer hover:border-blue-500 border-transparent ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     Upload PDF File
@@ -238,10 +261,7 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-
-          
         </div>
-
       </div>
       <div className="flex-grow px-5">
   <div className={`py-12 px-4 sm:px-6 lg:px-8 ${cardClass} rounded-lg shadow-md`}>
@@ -297,12 +317,10 @@ const HomePage = () => {
   </div>
 </div>
 </div>
-
       <footer className="p-5 shadow-inner">
-      <Footer isDarkMode={isDarkMode} />
-
+        <Footer isDarkMode={isDarkMode} />
       </footer>
-
+  
       {downloadModalOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
           <div className={`p-8 rounded-lg shadow-lg text-center ${cardClass}`}>
