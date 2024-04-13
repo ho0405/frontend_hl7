@@ -10,11 +10,6 @@ import {
   collection,
   addDoc,
   serverTimestamp,
-  onSnapshot,
-  query,
-  orderBy,
-  deleteDoc,
-  doc
 } from "firebase/firestore";
 import Footer from '../penguinChatbot/footer';
 
@@ -26,12 +21,17 @@ const HomePage = () => {
   const [startConvert, setStartConvert] = useState(false);
   const [conversionProgress, setConversionProgress] = useState(0);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
-  const [loginTime, setLoginTime] = useState(null); // login time
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [loginTime, setLoginTime] = useState(null);
 
   const router = useRouter();
 
   useEffect(() => {
+    const storedLoginTime = sessionStorage.getItem('loginTime');
+    if (storedLoginTime) {
+      setLoginTime(new Date(storedLoginTime));
+    }
+
     const checkAuthentication = async () => {
       await new Promise((resolve) => setTimeout(resolve,50));
       setLoading(false);
@@ -39,14 +39,34 @@ const HomePage = () => {
     checkAuthentication();
   }, [user]);
 
+  useEffect(() => {
+    if (user && !loginTime) {
+      const currentTime = new Date();
+      sessionStorage.setItem('loginTime', currentTime.toISOString());
+      setLoginTime(currentTime);
+    }
+  }, [user, loginTime]);
+
   const handleSignOut = async () => {
     try {
+      const logoutTime = new Date();
+      const timeDifference = loginTime ? (logoutTime - new Date(loginTime)) / (1000 * 60) : 0;
+
+      await addDoc(collection(db, 'logouts'), {
+        email: user?.email,
+        loginTime: loginTime,
+        logoutTime: logoutTime,
+        timeDifferenceMinutes: timeDifference
+      });
+
+      sessionStorage.removeItem('loginTime');  // Clear session storage
       await logOut();
       router.push('/');
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
+  
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];

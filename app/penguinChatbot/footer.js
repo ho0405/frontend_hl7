@@ -10,7 +10,7 @@ const Footer = ({ isDarkMode }) => {
     <footer className={`flex-1 p-10 rounded-lg flex-col md:flex-row justify-between items-center md:items-start p-10 ${footerClass}`}>
       <div className="mb-6 md:mb-0">
         <p className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Hi7 Hl7</p>
-        <p>&copy; 2024 Preform & Pre kids Radiology</p>
+        <p>&copy; 2024 Pureform & Pure kids Radiology</p>
         <div className="flex mt-4">
           <a href="https://www.facebook.com" className={`mr-4 ${socialIconClass}`}><FaFacebookF /></a>
           <a href="https://www.instagram.com" className={`mr-4 ${socialIconClass}`}><FaInstagram /></a>

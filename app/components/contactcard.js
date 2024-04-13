@@ -25,6 +25,7 @@ const ContactCard = ({ isDarkMode }) => {
       hours: "Monday-Friday: 8AM-4PM, Saturday: 9AM-3PM",
     }
   ];
+  
 
   const bgClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
   const logoBgClass = isDarkMode ? 'bg-gray-700' : 'bg-gray-200'; // Darker background for the logo in dark mode
