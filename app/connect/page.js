@@ -37,7 +37,7 @@ function ConnectPage() {
       </nav>
 
       <div className="mx-10 my-6">
-        <ContactCard />
+        <ContactCard isDarkMode={isDarkMode} />
       </div>
       <footer className="p-5 shadow-inner">
       <Footer isDarkMode={isDarkMode} />

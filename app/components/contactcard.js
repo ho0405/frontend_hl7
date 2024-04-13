@@ -1,99 +1,70 @@
 "use client"
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-const ContactCard = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+const ContactCard = ({ isDarkMode }) => {
+  const locationsData = [
+    {
+      name: "Calgary Southeast",
+      address: "519 - 4916 130 Ave SE Calgary, AB T2Z 0G4",
+      hours: "Monday-Friday: 8AM-4PM, Saturday: 9AM-1PM",
+    },
+    {
+      name: "Calgary Central",
+      address: "200 - 3916 Macleod Trail SE, Calgary, AB T2G 2R5",
+      hours: "Monday-Friday: 8AM-4PM, Saturday: Closed",
+    },
+    {
+      name: "Calgary Northwest",
+      address: "350 - 600 Crowfoot Cres NW, Calgary, AB T3G 0B4",
+      hours: "Monday-Friday: 8AM-4PM, Saturday: Closed",
+    },
+    {
+      name: "Airdrie",
+      address: "20 - 105 Main St N, Airdrie, AB T4B 0R3",
+      hours: "Monday-Friday: 8AM-4PM, Saturday: 9AM-3PM",
+    }
+  ];
 
-  const bgClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gradient-to-r from-blue-300 to-purple-300 text-black';
-  const cardClassLeft = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
-  const cardClassRight = isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'; // Adjust this as needed
+  const bgClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
+  const logoBgClass = isDarkMode ? 'bg-gray-700' : 'bg-gray-200'; // Darker background for the logo in dark mode
+  const textClass = isDarkMode ? 'text-white' : 'text-gray-700';
+  const cardHeight = "h-70"; // Set a consistent height for all cards
 
   return (
     <div className="flex flex-col items-center justify-center">
       {/* Contact Information Card */}
-      <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
-        <div className={`flex items-center justify-center p-2 bg-gray-200`}>
-          <h2 className="font-bold text-lg">Contact Information</h2>
+      <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass} ${cardHeight}`}>
+        <div className={`flex items-center justify-center p-2 ${logoBgClass} cursor-pointer`}>
+          <h2 className={`font-bold text-lg ${textClass}`}>Contact Information</h2>
         </div>
-        <div className={`flex flex-col items-center p-3 space-y-2 ${cardClassRight}`}>
-          <p className="text-gray-700 text-sm">Phone: 403-726-9729</p>
-          <p className="text-gray-700 text-sm">Email: Info@MyPureform.com</p>
+        <div className={`flex flex-col items-center p-3 space-y-2 ${bgClass}`}>
+          <p className={`${textClass} text-sm`}>Phone: 403-726-9729</p>
+          <p className={`${textClass} text-sm`}>Email: Info@MyPureform.com</p>
         </div>
       </div>
-<br></br>
+      <br/>
+
       {/* Location Cards */}
-      <div className="flex justify-between w-full mt-4">
-        {/* First Card */}
-        <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
-          <Link href="https://mypureform.com/" passHref>
-            <div className="flex items-center justify-center p-2 bg-gray-200 cursor-pointer">
-              <img className="h-12" src="/images/logo.png" alt="Company Logo" />
-            </div>
-          </Link>
-          <div className="flex">
-            <div className={`flex-1 ${cardClassLeft} px-3 py-2 space-y-2`}>
-              <div className="font-bold text-lg mb-1">Calgary Southeast</div>
-              <p className="text-gray-700 text-sm">Address: 519 - 4916 130 Ave SE Calgary, AB T2Z 0G4</p>
-              <p className="text-gray-700 text-sm"><strong>Hours:</strong> 
-              <br />Monday-Friday: 8AM-4PM, 
-              <br />Saturday: 9AM-1PM</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Second Card */}
-        <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
-          <Link href="https://mypureform.com/" passHref>
-            <div className="flex items-center justify-center p-2 bg-gray-200 cursor-pointer">
-              <img className="h-12" src="/images/logo.png" alt="Company Logo" />
-            </div>
-          </Link>
-          <div className="flex">
-            <div className={`flex-1 ${cardClassRight} px-3 py-2 space-y-2`}>
-              <div className="font-bold text-lg mb-1">Calgary Central</div>
-              <p className="text-gray-700 text-sm">Address: 200 - 3916 Macleod Trail SE, Calgary, AB T2G 2R5</p>
-              <p className="text-gray-700 text-sm"><strong>Hours:</strong> 
-              <br />Monday-Friday: 8AM-4PM <br />Saturday:Closed</p>
+      <div className="flex flex-wrap justify-between w-full mt-4">
+        {locationsData.map((location, index) => (
+          <div key={location.name} className={`max-w-xs w-full md:w-1/2 lg:w-1/4 p-2`}>
+            <div className={`rounded-md overflow-hidden shadow-lg ${bgClass} ${cardHeight}`}>
+              <Link href="https://mypureform.com/" passHref>
+                <div className={`flex items-center justify-center p-2 ${logoBgClass} cursor-pointer`}>
+                  <img className="h-12" src="/images/logo.png" alt="Company Logo" />
+                </div>
+              </Link>
+              <div className="flex flex-col justify-between p-3 space-y-2">
+                <div>
+                  <div className={`font-bold text-lg mb-1 ${textClass}`}>{location.name}</div>
+                  <p className={`${textClass} text-sm`}>Address: {location.address}</p>
+                </div>
+                <p className={`${textClass} text-sm`}><strong>Hours:</strong> <br />{location.hours}</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Third Card */}
-        <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
-          <Link href="https://mypureform.com/" passHref>
-            <div className="flex items-center justify-center p-2 bg-gray-200 cursor-pointer">
-            <Image src="/images/logo.png" alt="Logo" width={28} height={12} className="mr-4" />
-            </div>
-          </Link>
-          <div className="flex">
-            <div className={`flex-1 ${cardClassLeft} px-3 py-2 space-y-2`}>
-              <div className="font-bold text-lg mb-1">Calgary Northwest</div>
-              <p className="text-gray-700 text-sm">Address: 350 - 600 Crowfoot Cres NW, Calgary, AB T3G 0B4</p>
-              <p className="text-gray-700 text-sm"><strong>Hours:</strong> <br />Monday-Friday: 8AM-4PM <br /> Saturday: Closed</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Fourth Card */}
-        <div className={`max-w-xs w-full mx-auto rounded-md overflow-hidden shadow-lg ${bgClass}`}>
-          <Link href="https://mypureform.com/" passHref>
-            <div className="flex items-center justify-center p-2 bg-gray-200 cursor-pointer">
-              <img className="h-12" src="/images/logo.png" alt="Company Logo" />
-            </div>
-          </Link>
-          <div className="flex">
-            <div className={`flex-1 ${cardClassRight} px-3 py-2 space-y-2`}>
-              <div className="font-bold text-lg mb-1">Airdrie</div>
-              <p className="text-gray-700 text-sm">Address: 20 - 105 Main St N, Airdrie, AB T4B 0R3</p>
-              <p className="text-gray-700 text-sm"><strong>Hours:</strong> <br />Monday-Friday: 8AM-4PM <br />Saturday: 9AM-3PM</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import Footer from '../penguinChatbot/footer';
-import ServicesPage from '../components/servicespage';
+import ServiceItem from '../components/servicespage';
 
 function ServicePage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
@@ -37,7 +37,7 @@ function ServicePage() {
       </nav>
 
       <div className="mx-10 my-6">
-        <ServicesPage isDarkMode={isDarkMode}/>
+        <ServiceItem isDarkMode={isDarkMode}/>
       </div>
       <footer className="p-5 shadow-inner">
       <Footer isDarkMode={isDarkMode} />
