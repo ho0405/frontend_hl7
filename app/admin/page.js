@@ -1,336 +1,184 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { UserAuth } from '../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore'; 
-// import { collection, query, orderBy, getDocs } from '@firebase/firestore'; 
-import { db } from '../_utils/firebase'; 
+import { useRouter } from 'next/navigation'; // corrected import path
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../_utils/firebase';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import { UserAuth } from '../context/AuthContext';
+import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const AdminDashboard = () => {
   const { logOut } = UserAuth();
   const router = useRouter();
   const [loginHistory, setLoginHistory] = useState([]);
-  const [logoutHistory, setLogoutHistory] = useState([]); 
+  const [logoutHistory, setLogoutHistory] = useState([]);
   const [activityHistory, setActivityHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [displayContent, setDisplayContent] = useState(null); 
-  const [isDarkMode, setIsDarkMode] = useState(false); 
-  const [showMore, setShowMore] = useState(false); // State variable to track showing more items
+  const [displayContent, setDisplayContent] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Conversions',
+        data: [],
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+      },
+    ],
+  });
+
   useEffect(() => {
     setLoading(true);
     const fetchHistory = async () => {
-      const loginQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
-      getDocs(loginQuery).then(loginSnapshot => {
+      try {
+        const loginQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
+        const activityQuery = query(collection(db, 'activityHistory'), orderBy('timestamp', 'desc'));
+        const logoutQuery = query(collection(db, 'logouts'), orderBy('logoutTime', 'desc'));
+        
+        const [loginSnapshot, activitySnapshot, logoutSnapshot] = await Promise.all([
+          getDocs(loginQuery),
+          getDocs(activityQuery),
+          getDocs(logoutQuery),
+        ]);
+
         const loginData = loginSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-          timestamp: doc.data().timestamp.toDate(), // Ensuring timestamp conversion for display
+          timestamp: doc.data().timestamp.toDate(),
         }));
-        setLoginHistory(loginData);
-      }).catch(error => {
-        console.error('Failed to fetch login history:', error);
-      });
 
-      const activityQuery = query(collection(db, 'activityHistory'), orderBy('timestamp', 'desc'));
-      getDocs(activityQuery).then(activitySnapshot => {
         const activityData = activitySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-          timestamp: doc.data().timestamp.toDate(), // Ensuring timestamp conversion for display
+          timestamp: doc.data().timestamp.toDate(),
         }));
+
+        const logoutData = logoutSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          loginTime: doc.data().loginTime.toDate(),
+          logoutTime: doc.data().logoutTime.toDate(),
+          timeDifferenceMinutes: doc.data().timeDifferenceMinutes,
+        }));
+
+        setLoginHistory(loginData);
         setActivityHistory(activityData);
-      }).catch(error => {
-        console.error('Failed to fetch activity history:', error);
-      }).finally(() => setLoading(false));
+        setLogoutHistory(logoutData);
+
+        const conversionCounts = activityData.reduce((acc, { userEmail }) => {
+          acc[userEmail] = (acc[userEmail] || 0) + 1;
+          return acc;
+        }, {});
+
+        setChartData({
+          labels: Object.keys(conversionCounts),
+          datasets: [{
+            label: 'Conversions',
+            data: Object.values(conversionCounts),
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          }]
+        });
+      } catch (error) {
+        console.error('Failed to fetch history:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchHistory();
   }, []);
 
-
-    // const fetchLoginHistory = async () => {
-    //   try {
-    //     const loginHistoryQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
-    //     const loginHistorySnapshot = await getDocs(loginHistoryQuery);
-    //     const loginHistoryData = loginHistorySnapshot.docs.map(doc => ({
-    //       id: doc.id,
-    //       ...doc.data()
-    //     }));
-    //     setLoginHistory(loginHistoryData);
-    //   } catch (error) {
-    //     console.error('Failed to fetch login history:', error);
-    //   }
-    //   handleDisplayLoginHistory();
-    // };
-
-    
-    
-    useEffect(() => {
-      const fetchLogoutHistory = async () => {
-        try {
-          const logoutHistoryQuery = query(collection(db, 'logouts'), orderBy('timestamp', 'desc'));
-          const logoutHistorySnapshot = await getDocs(logoutHistoryQuery);
-          const logoutHistoryData = logoutHistorySnapshot.docs.map(doc => ({
-            id: doc.id,
-            email: doc.data().email,
-            logoutTime: doc.data().logoutTime, 
-          }));
-          // Calculate time difference
-          logoutHistoryData.forEach(item => {
-            const timeDifference = (new Date() - item.logoutTime.getTime()) / (1000 * 60);
-            item.timeDifferenceMinutes = Math.abs(timeDifference);
-          });
-          console.log("Logout History Data:", logoutHistoryData);
-          setLogoutHistory(logoutHistoryData);
-        } catch (error) {
-          console.error('Failed to fetch logout history:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchLogoutHistory();
-      
-    }, []);
-    
-
-
-  //   const fetchActivityHistory = async () => {
-  //     try {
-  //       const activityHistoryQuery = query(collection(db, 'activityHistory'), orderBy('email'));
-  //       const activityHistorySnapshot = await getDocs(activityHistoryQuery);
-  //       const activityHistoryData = activityHistorySnapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data()
-  //       }));
-  //       setActivityHistory(activityHistoryData);
-  //     } catch (error) {
-  //       console.error('Failed to fetch activity history:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  
-  //   fetchLoginHistory();
-  //   fetchLogoutHistory(); 
-  //   fetchActivityHistory();
-  // }, []);
-  
   const handleSignOut = async () => {
     try {
-      await logOut(); 
+      await logOut();
       router.push('/');
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
 
-  const handleDisplayLoginHistory = () => {
-    setDisplayContent('loginHistory');
-  };
+  const handleDisplay = type => setDisplayContent(type);
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  const handleDisplayLogoutHistory = () => { 
-    setDisplayContent('logoutHistory');
-  };
-
-  const handleDisplayActivityHistory = () => {
-    setDisplayContent('activityHistory');
-  };
-  
-  const handleShowMore = () => {
-    setShowMore(true);
-  };
-
-  const handleShowLess = () => {
-    setShowMore(false);
-  };
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-  
-  const bgClass = isDarkMode ? 'bg-gray-800 text-white' : ' text-black';
+  const bgClass = isDarkMode ? 'bg-gray-800 text-white' : 'text-black';
   const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
 
   return (
     <div className={`flex flex-col min-h-screen ${bgClass}`}>
       <nav className={`p-4 shadow-md rounded-lg mt-4 mx-10 ${cardClass}`}>
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4" />
-          </div>
-          <div className="flex items-center space-x-6">
-            <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-            <button
-              onClick={handleSignOut}
-              className="px-4 py-2 rounded-md bg-blue-500 text-white transition duration-300 hover:bg-transparent hover:border-blue-500 hover:text-blue-500 border-2 border-transparent"
-            >
+          <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4" />
+          <div className="flex items-center space-x-4">
+            <button onClick={handleSignOut} className="px-4 py-2 rounded-md bg-blue-500 text-white transition duration-300 hover:bg-transparent hover:border-blue-500 hover:text-blue-500 border-2 border-transparent">
               Sign Out
             </button>
+            <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
           </div>
         </div>
       </nav>
+      <div className={`p-4 shadow-md rounded-lg mx-10 mt-4 ${cardClass}`}>
+  <ul className="flex justify-center space-x-6">
+    <li>
+      <button onClick={() => handleDisplay('loginHistory')} className={`${displayContent === 'loginHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
+        Login History
+      </button>
+    </li>
+    <li>
+      <button onClick={() => handleDisplay('logoutHistory')} className={`${displayContent === 'logoutHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
+        Logout History
+      </button>
+    </li>
+    <li>
+      <button onClick={() => handleDisplay('activityHistory')} className={`${displayContent === 'activityHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
+        Activity History
+      </button>
+    </li>
+    <li>
+      <button onClick={() => handleDisplay('chart')} className={`${displayContent === 'chart' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
+        Conversion Chart
+      </button>
+    </li>
+  </ul>
+</div>
 
-      <nav className={`p-4 shadow-md rounded-lg mx-10 bg-gray-100 text-gray-800 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-        <div className="container mx-auto flex justify-between items-center">
-          <ul className="flex">
-            <li className="mr-6">
-              <button
-                className={`hover:text-blue-500 focus:outline-none ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'} ${
-                  displayContent === 'loginHistory'
-                    ? 'text-blue-500'
-                    : 'text-gray-800'
-                  } ${displayContent === 'loginHistory' ? 'selected' : ''}`}
-                onClick={handleDisplayLoginHistory}
-              >
-                Login History
-              </button>
-            </li>
-            <li className="mr-6">
-              <button
-                className={`hover:text-blue-500 focus:outline-none ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}  ${
-                  displayContent === 'logoutHistory'
-                    ? 'text-blue-500'
-                    : 'text-gray-800'
-                  } ${displayContent === 'logoutHistory' ? 'selected' : ''}`}
-                onClick={handleDisplayLogoutHistory}
-              >
-                Logout History
-              </button>
-            </li>
-            <li>
-              <button
-                className={`hover:text-blue-500 focus:outline-none ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'} ${
-                  displayContent === 'activityHistory'
-                    ? 'text-blue-500'
-                    : 'text-gray-800'
-                  } ${displayContent === 'activityHistory' ? 'selected' : ''}`}
-                onClick={handleDisplayActivityHistory}
-              >
-                Activity History
-              </button>
-            </li>
-          </ul>
-        </div>
-      </nav>
       <div className="container mx-auto px-4 flex-grow flex justify-center items-center">
         {loading ? (
-          <div className="flex items-center">
-            <svg
-              className="animate-spin h-5 w-5 mr-3 text-blue-500"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A8.001 8.001 0 014 12H0c0 6.627 5.373 12 12 12v-4c-3.584 0-6.623-1.517-8.83-3.709z"
-              ></path>
-            </svg>
-            <span>Loading...</span>
-          </div>
+          <div>Loading...</div>
         ) : (
-          displayContent === 'loginHistory' && (
-            <div className={`w-1/2 max-w-lg p-8 m-4 rounded-lg shadow-lg animate-fade-in ${cardClass}`}>
-              <h2 className={`text-2xl font-bold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                Login History
-              </h2>
-              <ul>
-              {loginHistory.map((item, index) => (
-                <li key={index} className="mb-2">
-                  {item.email} - {item.timestamp instanceof Date ? item.timestamp.toLocaleString() : new Date(item.timestamp.seconds * 1000).toLocaleString()}
-                </li>
-              ))}
-              </ul>
-              {showMore ? (
-                <button
-                  className="text-blue-500 hover:text-blue-700"
-                  onClick={handleShowLess}
-                >
-                  Show Less
-                </button>
-              ) : (
-                <button
-                  className="text-blue-500 hover:text-blue-700"
-                  onClick={handleShowMore}
-                >
-                  Show More
-                </button>
-              )}
-            </div>
-          ) ||
-          displayContent === 'logoutHistory' && (
-            <div className={`w-full max-w-lg p-8 rounded-lg shadow-lg animate-fade-in ${cardClass}`}>
-              <h2 className={`text-2xl font-bold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                Logout History
-              </h2>
-              <ul>
-              {logoutHistory.map((item, index) => ( 
-                <li key={index} className="mb-2">
-                  {item.email} - {item.logoutTime.toLocaleString()} - {item.timeDifferenceMinutes.toFixed(2)} minutes ago
-                </li>
-              ))}
-              </ul>
-            </div>
-          ) ||
-          displayContent === 'activityHistory' && (
-            <div className={`w-full max-w-lg  p-8 rounded-lg shadow-lg animate-fade-in ${cardClass}`}>
-              <h2 className={`text-2xl font-bold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                Activity History
-              </h2>
-              <ul>
-              {activityHistory.map(({ id, userEmail, activityType, fileName, timestamp }) => {
-                
-                const displayTimestamp = timestamp.seconds
-                  ? new Date(timestamp.seconds * 1000).toLocaleString() 
-                  : new Date(timestamp).toLocaleString();
-
-                return (
-                  <li key={id}>
-                    {userEmail} - {activityType} - {fileName} - {displayTimestamp}
-                  </li>
-                );
-              })}
-              </ul>
-            </div>
-          )
+          <div className={`w-full max-w-lg p-8 mt-16 rounded-lg shadow-lg animate-fade-in ${cardClass}`}>
+            {displayContent === 'loginHistory' && loginHistory.map((item, index) => (
+              <div key={index}>{item.email} - {item.timestamp.toLocaleString()}</div>
+            ))}
+            {displayContent === 'logoutHistory' && logoutHistory.map((item, index) => (
+              <div key={index}>{item.email} - {item.loginTime.toLocaleString()} - {item.logoutTime.toLocaleString()} - {item.timeDifferenceMinutes.toFixed(2)} minutes</div>
+            ))}
+            {displayContent === 'activityHistory' && activityHistory.map(({ id, userEmail, activityType, fileName, timestamp }, index) => (
+              <div key={index}>{userEmail} - {activityType} - {fileName} - {timestamp.toLocaleString()}</div>
+            ))}
+            {displayContent === 'chart' && (
+  <div className="chart-container" style={{ height: '400px', width: '100%' }}>
+    <Bar
+      data={{
+        ...chartData,
+        datasets: [{
+          ...chartData.datasets[0],
+          backgroundColor: isDarkMode ? 'rgba(255, 255,0, 1)' : 'rgba(54, 162, 235,12 )',
+        }],
+      }}
+      options={{ maintainAspectRatio: false }}
+    />
+              </div>
+            )}
+          </div>
         )}
       </div>
-      <footer className="bg-blue-400 text-white py-4"></footer>
-      <style jsx>{`
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-        .selected {
-          color: #3b82f6; 
-          font-weight: bold; 
-        }
-      `}</style>
+      <footer className="p-4 bg-blue-400 text-white py-4 mt-16">© Pureform & Pure kids Radiology 2024</footer>
     </div>
   );
 };
 
 export default AdminDashboard;
-
-
-///test
