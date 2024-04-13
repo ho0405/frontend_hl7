@@ -1,6 +1,6 @@
 "use client"
-import React, { useState, useEffect } from "react";
-import { db, auth } from "../_utils/firebase"; 
+import React, { useState, useEffect } from 'react';
+import { db, auth } from '../_utils/firebase';
 import {
   collection,
   addDoc,
@@ -9,21 +9,19 @@ import {
   query,
   orderBy,
   deleteDoc,
-  doc
-} from "firebase/firestore";
-import { UserAuth } from "../context/AuthContext"; 
+  doc,
+} from 'firebase/firestore';
+import { UserAuth } from '../context/AuthContext';
 
-const LiveChatbot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const LiveChatbot = ({ isDarkMode }) => { // Receive isDarkMode as a prop
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { user } = UserAuth(); // Assuming UserAuth is your context for user information
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { user } = UserAuth();
 
   useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, "messages"), orderBy("createdAt"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const q = query(collection(db, 'messages'), orderBy('createdAt'));
+    const unsubscribe = onSnapshot(q, snapshot => {
       const loadedMessages = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -36,79 +34,67 @@ const LiveChatbot = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (newMessage.trim() === "" || !user) return;
+    if (newMessage.trim() === '' || !user) return;
 
-    await addDoc(collection(db, "messages"), {
+    await addDoc(collection(db, 'messages'), {
       text: newMessage,
       createdAt: serverTimestamp(),
-      user: user.email, 
+      user: user.email,
       userId: user.uid,
     });
-    setNewMessage("");
+    setNewMessage('');
   };
 
-  const handleDelete = async (messageId) => {
-    await deleteDoc(doc(db, "messages", messageId));
+  const handleDelete = async messageId => {
+    await deleteDoc(doc(db, 'messages', messageId));
   };
+
+  // Apply conditional classes for dark mode
+  const containerClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black';
+  const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
+  const messageClass = isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-black';
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50">
-      {!isOpen && (
-        <button onClick={() => setIsOpen(true)} className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center">
-          <img src="/images/chatbot.png" alt="Chatbot" className="h-12 w-14" />
-        </button>
-      )}
-      {isOpen && (
-        <div className="bg-white rounded-lg shadow-md p-4 w-80 max-h-96 overflow-y-auto">
-          {loading && <p>Loading...</p>}
-          {messages.map(({ id, user, text, createdAt, userId }) => (
-            <div key={id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
+    <div className={`flex items-center justify-center ${containerClass} rounded-lg`}>
+      <div className={`rounded-lg shadow-lg p-6 w-full max-w-lg space-y-6 ${cardClass}`}>
+        {loading && <p className="text-center">Loading...</p>}
+        {!loading && messages.map(({ id, user, text, createdAt, userId }) => (
+          <div key={id} className={`p-2 mb-2 rounded-lg border ${messageClass}`}>
+            <div className="flex justify-between items-center text-sm">
               <div>
-                <strong>{user}</strong>
-                <span style={{ fontSize: '0.8rem', marginLeft: '5px' }}>{createdAt}</span>
-                {userId === auth.currentUser.uid && (
-                  <button
-                    onClick={() => handleDelete(id)}
-                    style={{ marginLeft: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
-                    aria-label="Delete message"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-trash-2">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                  </button>
-                )}
+                <strong className="font-semibold">{user}</strong>
+                <span className="ml-2 text-gray-500">{createdAt}</span>
               </div>
-              <p>{text}</p>
+              {userId === auth.currentUser?.uid && (
+                <button onClick={() => handleDelete(id)} className="text-red-600 hover:text-red-800">
+                  <span className="sr-only">Delete message</span>🗑️
+                </button>
+              )}
             </div>
-          ))}
-          <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-            <textarea
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }
-              }}
-              className="w-full p-2 border rounded"
-              placeholder="Type your message here..."
-              style={{ resize: 'none', marginBottom: '10px' }}
-            ></textarea>
-            <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Send
-            </button>
-          </form>
-          <button onClick={() => setIsOpen(false)} className="mt-4 w-full text-gray-500 hover:text-gray-700">
-            Close Chat
+            <p className="mt-2">{text}</p>
+          </div>
+        ))}
+        <form onSubmit={handleSubmit} className="pt-2">
+          <textarea
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+            className={`w-full p-3 border ${isDarkMode ? 'border-blue-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500`}
+            placeholder="Type your message here..."
+            rows="3"
+          ></textarea>
+          <button type="submit" className="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Send
           </button>
-        </div>
-      )}
+        </form>
+      </div>
     </div>
   );
 };

@@ -24,6 +24,7 @@ const NavvBar = () => {
           <div className="flex items-center space-x-6">
             <Link href="/" className="hover:text-blue-500">Home</Link>
             <Link href="/journal" className="hover:text-blue-500">Convert</Link>
+            <Link href="/services" className="hover:text-blue-500">Services</Link>
             <Link href="/connect" className="hover:text-blue-500">Connect Us</Link>
             <Link href="/communicate" className="hover:text-blue-500">Communicate</Link>
             <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />

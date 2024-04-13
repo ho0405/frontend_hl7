@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Footer from './penguinChatbot/footer';
+import '../styles/globals.css';
 
 function HomePage() {
   const [typedText, setTypedText] = useState('');

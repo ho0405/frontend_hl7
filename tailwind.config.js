@@ -8,8 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'Helvetica', 'Arial', 'sans-serif'],
-        serif: ['Montserrat', 'serif'],
+        sans: ['Poppins', 'sans-serif'], // Ensures Poppins is the default sans-serif font
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

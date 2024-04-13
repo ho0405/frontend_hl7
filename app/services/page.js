@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import ThemeSwitcher from '../components/ThemeSwitcher';
-import ContactCard from '../components/contactcard';
 import Footer from '../penguinChatbot/footer';
+import ServicesPage from '../components/servicespage';
 
-function ConnectPage() {
+function servicePage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
   const toggleDarkMode = () => {
@@ -37,7 +37,7 @@ function ConnectPage() {
       </nav>
 
       <div className="mx-10 my-6">
-        <ContactCard />
+        <ServicesPage isDarkMode={isDarkMode}/>
       </div>
       <footer className="p-5 shadow-inner">
       <Footer isDarkMode={isDarkMode} />
@@ -47,4 +47,4 @@ function ConnectPage() {
   );
 }
 
-export default ConnectPage;
+export default servicePage;
