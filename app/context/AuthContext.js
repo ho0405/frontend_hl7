@@ -1,7 +1,7 @@
-import { useContext, createContext, useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc, collection } from 'firebase/firestore'; // Import additional Firestore functions
-import { auth, db } from '../_utils/firebase'; // Ensure you're importing your Firestore instance as `db`
+import { createContext, useContext, useEffect, useState } from 'react';
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
+import { auth, db } from '../_utils/firebase';
 
 const AuthContext = createContext();
 
@@ -34,6 +34,36 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const googleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Google Sign-In failed:", error);
+      window.alert(`Google Sign-In failed: ${error.message}`);
+    }
+  };
+
+  const GithubSignIn = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Google Sign-In failed:", error);
+      window.alert(`Google Sign-In failed: ${error.message}`);
+    }
+  };
+  
+  const FacebookSignIn = async () => {
+    try {
+      const provider = new FacebookAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Google Sign-In failed:", error);
+      window.alert(`Google Sign-In failed: ${error.message}`);
+    }
+  };
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -43,7 +73,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, logOut, onLogin }}>
+    <AuthContext.Provider value={{ user, googleSignIn, GithubSignIn, FacebookSignIn, logOut, onLogin }}>
       {children}
     </AuthContext.Provider>
   );
