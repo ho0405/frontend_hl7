@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import '../../styles/globals.css';
 
 const Footer = ({ isDarkMode }) => {
   const footerClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900';

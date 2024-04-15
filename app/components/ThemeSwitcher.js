@@ -1,4 +1,6 @@
 "use client"
+import '../../styles/globals.css';
+
 const ThemeSwitcher = ({ isDarkMode, toggleDarkMode }) => {
   return (
     <button

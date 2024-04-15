@@ -3,6 +3,7 @@ import { useState } from "react";
 import React from 'react';
 import Link from "next/link";
 import ThemeSwitcher from './ThemeSwitcher';
+import '../../styles/globals.css';
 
 const NavvBar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false); 

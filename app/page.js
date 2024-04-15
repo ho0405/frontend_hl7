@@ -4,6 +4,9 @@ import Link from 'next/link';
 import Footer from './penguinChatbot/footer';
 import '../styles/globals.css';
 
+
+
+
 function HomePage() {
   const [typedText, setTypedText] = useState('');
   const textToType = "Effortlessly convert PDF Files to HL7.";

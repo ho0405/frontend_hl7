@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';  
 import NavvBar from "../components/navvbar";
+import '../../styles/globals.css';
 import {
   Card,
   CardHeader,
@@ -39,7 +40,7 @@ export const Auth = ({ isDarkMode }) => {
     <div 
       className="min-h-screen flex items-center justify-center"
       style={{
-        backgroundImage: "url('/images/background.jpg')", // 이미지 경로 수정
+        backgroundImage: "url('/images/background.jpg')", 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

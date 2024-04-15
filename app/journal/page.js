@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import Footer from '../penguinChatbot/footer';
 
+
 const HomePage = () => {
   const { user, logOut } = UserAuth();
   const [loading, setLoading] = useState(true);
@@ -301,9 +302,16 @@ const HomePage = () => {
   <h3 className={`text-lg font-semibold ${textColorClass}`}>Conversion API</h3>
   <p className={`${textColorClass}`}>With passion to Developers</p>
   <div className="flex justify-center space-x-4 mt-4">
-      <button className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>Documentation</button>
-      <button className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>PHP Example</button>
-      <button className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>Get an API Key</button>
+  <a href="/Documentation" target="_blank" rel="noopener noreferrer" className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>
+    Documentation
+</a>
+<a href="/PhpExample" target="_blank" rel="noopener noreferrer" className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 ${buttonClass}`}>
+    PHP Example
+</a>
+<a href="/ApiKey" target="_blank" rel="noopener noreferrer" className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>
+    Get an API Key
+</a>
+
     </div>
   </div>
   

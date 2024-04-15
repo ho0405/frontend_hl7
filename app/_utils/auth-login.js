@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { UserAuth } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';  
 import NavvBar from '../components/navvbar';
+import '../../styles/globals.css';
 import {
   Card,
   CardHeader,

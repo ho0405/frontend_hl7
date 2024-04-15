@@ -137,20 +137,20 @@ const AdminDashboard = () => {
 };
 
 const ChartCard = ({ title, count }) => (
-  <div className="p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center">
+  <div className="p-5 m-2 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center md:w-1/4">
     <h2 className="text-lg font-bold text-center">{title}</h2>
     <p className="text-xl">{count}</p>
   </div>
 );
 
 const ChartContainer = ({ chart }) => (
-  <div className="p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center w-full">
+  <div className="p-5 m-2 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center w-full md:w-1/2 chart-container">
     {chart}
   </div>
 );
 
 const LoginHistory = ({ loginHistory, bgClass }) => (
-  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+  <div className="w-full p-5 m-2 bg-white rounded-lg shadow-lg">
     <h2 className="text-xl font-semibold mb-4">Login History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
@@ -174,7 +174,7 @@ const LoginHistory = ({ loginHistory, bgClass }) => (
 );
 
 const LogoutHistory = ({ logoutHistory }) => (
-  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+  <div className="w-full p-4 m-2 bg-white rounded-lg shadow-lg">
     <h2 className="text-xl font-semibold mb-4">Logout History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
@@ -200,7 +200,7 @@ const LogoutHistory = ({ logoutHistory }) => (
 );
 
 const ActivityHistory = ({ activityHistory }) => (
-  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+  <div className="w-full p-4 m-2 bg-white rounded-lg shadow-lg">
     <h2 className="text-xl font-semibold mb-4">Activity History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
@@ -228,7 +228,7 @@ const ActivityHistory = ({ activityHistory }) => (
 );
 
 const ChartDisplay = () => (
-  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+  <div className="w-full p-4 m-2 bg-white rounded-lg shadow-lg">
     <h2 className="text-xl font-semibold mb-4">Converted Chart</h2>
     {/* Chart implementation here */}
     <Bar

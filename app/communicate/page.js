@@ -5,6 +5,7 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import LiveChatbot from '../chatbot/page'; // Ensure this import path is correct
 import Footer from '../penguinChatbot/footer';
 import Image from 'next/image';
+import '../../styles/globals.css';
 
 const HomePage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
