@@ -21,7 +21,7 @@ function Documentation() {
                 <li>format: The target format (e.g., PDF, DOCX).</li>
             </ul>
             <h4>Example Request:</h4>
-            <code>curl -X POST "http://example.com/api/convert" -H "Authorization: Bearer YOUR_API_KEY" -F "file=@path_to_file" -F "format=pdf"</code>
+            <code>curl -X POST &quot;http://example.com/api/convert&quot; -H &quot;Authorization: Bearer YOUR_API_KEY&quot; -F &quot;file=@path_to_file&quot; -F &quot;format=pdf&quot;</code>
             
             <h4>Example Response:</h4>
             <code>{"{status: 'success', message: 'File converted successfully.'}"}</code>
