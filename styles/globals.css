@@ -1,13 +1,9 @@
 /* styles/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 html,
 body {
-  font-family: 'Nunito Sans', sans-serif;
-
+  font-family: 'Poppins', sans-serif;
   /* This applies the Poppins font across all text elements */
 }
 
