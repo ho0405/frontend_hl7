@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';  
 import NavvBar from "../components/navvbar";
-import '../../styles/globals.css';
+
 import {
   Card,
   CardHeader,

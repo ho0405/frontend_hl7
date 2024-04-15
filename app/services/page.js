@@ -4,7 +4,7 @@ import Link from 'next/link';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import Footer from '../penguinChatbot/footer';
 import ServiceItem from '../components/servicespage';
-import '../../styles/globals.css';
+
 
 function ServicePage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state

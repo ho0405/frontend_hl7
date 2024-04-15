@@ -11,7 +11,6 @@ import {
   deleteDoc,
   doc,
 } from 'firebase/firestore';
-import '../../styles/globals.css';
 import { UserAuth } from '../context/AuthContext';
 
 const LiveChatbot = ({ isDarkMode }) => { // Receive isDarkMode as a prop

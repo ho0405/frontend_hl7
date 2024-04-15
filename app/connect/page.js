@@ -4,7 +4,7 @@ import Link from 'next/link';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import ContactCard from '../components/contactcard';
 import Footer from '../penguinChatbot/footer';
-import '../../styles/globals.css';
+
 
 function ConnectPage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
