@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import Footer from '../penguinChatbot/footer';
+import './ButtonComponent.css';
 
 
 const HomePage = () => {
@@ -302,17 +303,16 @@ const HomePage = () => {
   <h3 className={`text-lg font-semibold ${textColorClass}`}>Conversion API</h3>
   <p className={`${textColorClass}`}>With passion to Developers</p>
   <div className="flex justify-center space-x-4 mt-4">
-  <a href="/Documentation" target="_blank" rel="noopener noreferrer" className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>
+  <a href="/Documentation" target="_blank" rel="noopener noreferrer" className="button bg-blue-500">
     Documentation
-</a>
-<a href="/PhpExample" target="_blank" rel="noopener noreferrer" className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 ${buttonClass}`}>
+  </a>
+  <a href="/PhpExample" target="_blank" rel="noopener noreferrer" className="button bg-green-500">
     PHP Example
-</a>
-<a href="/ApiKey" target="_blank" rel="noopener noreferrer" className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 px-4 py-2 rounded ${buttonClass}`}>
+  </a>
+  <a href="/ApiKey" target="_blank" rel="noopener noreferrer" className="button bg-red-500">
     Get an API Key
-</a>
-
-    </div>
+  </a>
+</div>
   </div>
   
   {/* Rating Section */}
