@@ -1,12 +1,22 @@
-/* styles/globals.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-html,
+html {
+  font-family: 'Poppins', sans-serif;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   /* This applies the Poppins font across all text elements */
 }
 
+footer {
+  font-family: 'Poppins', sans-serif;
+}
+
+div {
+  font-family: 'Poppins', sans-serif;
+
+}
 
 /* Add this CSS in your global stylesheet or a CSS module */
 .chat-container {
