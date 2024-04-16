@@ -234,7 +234,8 @@ const HomePage = () => {
             </button>
           </div>
           {/* Converting section */}
-          <div className={`flex-1 p-10 rounded-lg shadow-lg ${cardClass}`} style={{ padding: "15vh 1vw" }}>
+          <div className={`flex-1 p-10 rounded-lg shadow-lg ${cardClass}`} style={{ boxSizing: "border-box",padding: "14.40vh", border: "4px dashed #ccc" }}>
+
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-center text-black mb-20">
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Convert to HL7</h1>
