@@ -66,8 +66,8 @@ const LiveChatbot = ({ isDarkMode }) => {
   const messageClass = isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-black';
 
   return (
-    <div className={`flex items-center justify-center ${containerClass} rounded-lg`}>
-      <div className={`rounded-lg shadow-lg p-3 w-full max-w-lg space-y-6 ${cardClass}`}>
+    <div className={`flex items-center justify-center mt-10 ${containerClass} rounded-lg`}>
+      <div className={`rounded-lg shadow-lg p-3 w-full min-w-lg space-y-6 ${cardClass}`}>
         {loading && <p className="text-center">Loading...</p>}
         {!loading && messages.map(({ id, user, text, createdAt, userId }) => (
           <div key={id} className={`p-2 mb-2 rounded-lg border ${messageClass}`}>
