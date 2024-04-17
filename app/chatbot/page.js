@@ -11,9 +11,12 @@ import {
   deleteDoc,
   doc,
 } from 'firebase/firestore';
+import { createAvatar } from '@dicebear/core';
+import { personas } from '@dicebear/collection';
 import { UserAuth } from '../context/AuthContext';
 
-const LiveChatbot = ({ isDarkMode }) => { // Receive isDarkMode as a prop
+
+const LiveChatbot = ({ isDarkMode }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -34,6 +37,13 @@ const LiveChatbot = ({ isDarkMode }) => { // Receive isDarkMode as a prop
     return () => unsubscribe();
   }, []);
 
+  // This function generates an SVG avatar string using @dicebear/personas
+  const getRandomAvatar = (userId) => {
+    const options = { seed: userId }; // Customize options as needed
+    const svgAvatar = createAvatar(personas, options);
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svgAvatar)}`;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     if (newMessage.trim() === '' || !user) return;
@@ -51,19 +61,19 @@ const LiveChatbot = ({ isDarkMode }) => { // Receive isDarkMode as a prop
     await deleteDoc(doc(db, 'messages', messageId));
   };
 
-  // Apply conditional classes for dark mode
   const containerClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black';
   const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
   const messageClass = isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-black';
 
   return (
     <div className={`flex items-center justify-center ${containerClass} rounded-lg`}>
-      <div className={`rounded-lg shadow-lg p-6 w-full max-w-lg space-y-6 ${cardClass}`}>
+      <div className={`rounded-lg shadow-lg p-3 w-full max-w-lg space-y-6 ${cardClass}`}>
         {loading && <p className="text-center">Loading...</p>}
         {!loading && messages.map(({ id, user, text, createdAt, userId }) => (
           <div key={id} className={`p-2 mb-2 rounded-lg border ${messageClass}`}>
             <div className="flex justify-between items-center text-sm">
-              <div>
+              <div className="flex items-center">
+                <img src={getRandomAvatar(userId)} alt="User Avatar" className="w-8 h-8 rounded-full mr-2"/>
                 <strong className="font-semibold">{user}</strong>
                 <span className="ml-2 text-gray-500">{createdAt}</span>
               </div>
