@@ -76,16 +76,16 @@ const AdminDashboard = () => {
         </div>
       </nav>
       <div className={`p-4 shadow-md mx-5 w-100 transparent-card ${cardClass}`}>
-  <ul className="flex justify-center space-x-12">
-    {['dashboard', 'loginHistory', 'logoutHistory', 'activityHistory', 'chart'].map(view => (
-      <li key={view}>
-        <button onClick={() => setDisplayContent(view)} className={`${displayContent === view ? 'text-blue-500' : 'text-gray-800'} focus:outline-none hover:text-blue-500 focus:text-blue-500`}>
-          {view.charAt(0).toUpperCase() + view.slice(1).replace(/([A-Z])/g, ' $1')}
-        </button>
-      </li>
-    ))}
-  </ul>
-</div>
+        <ul className="flex justify-center space-x-12">
+          {['dashboard', 'loginHistory', 'logoutHistory', 'activityHistory', 'chart'].map(view => (
+            <li key={view}>
+              <button onClick={() => setDisplayContent(view)} className={`${displayContent === view ? 'text-blue-500' : 'text-gray-800'} focus:outline-none hover:text-blue-500 focus:text-blue-500`}>
+                {view.charAt(0).toUpperCase() + view.slice(1).replace(/([A-Z])/g, ' $1')}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {loading ? (
         <div className="mx-auto px-5 min-h-screen flex justify-center items-center">Loading...</div>
@@ -93,37 +93,37 @@ const AdminDashboard = () => {
         <div className="m-5 py-5">
           {displayContent === 'dashboard' && (
             <>
-            <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
-              <div className="col-span-1 relative">
-                <img src="/images/login.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                <ChartCard title="Total Logins" count={loginHistory.length} />
-              </div>
-              <div className="col-span-1 relative">
-                <img src="/images/time.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                <ChartCard title="Average Stay Time" count={averageStayTime.toFixed(2)} />
-              </div>
-              <div className="col-span-1 relative">
-                <img src="/images/direct-download.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                <ChartCard title="Total Downloads" count={activityHistory.length} />
-              </div>
-              <div className="col-span-1">
-                <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
-              </div>
-              <div className="col-span-1">
-                <ChartContainer chart={<LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />} />
-              </div>
-              <div className="col-span-1">
-                <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
-              </div>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
+                <div className="col-span-1 relative">
+                  <img src="/images/login.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Total Logins" count={loginHistory.length} />
+                </div>
+                <div className="col-span-1 relative">
+                  <img src="/images/time.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Average Stay Time" count={averageStayTime.toFixed(2)} />
+                </div>
+                <div className="col-span-1 relative">
+                  <img src="/images/direct-download.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Total Downloads" count={activityHistory.length} />
+                </div>
+                <div className="col-span-1">
+                  <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
+                </div>
+                <div className="col-span-1">
+                  <ChartContainer chart={<LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />} />
+                </div>
+                <div className="col-span-1">
+                  <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
+                </div>
               </div>
             </>
           )}
           {displayContent === 'loginHistory' && (
             <>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
                 <LoginHistory loginHistory={loginHistory} bgClass={bgClass} />
                 <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
-            </div>
+              </div>
             </>
           )}
 
@@ -138,21 +138,21 @@ const AdminDashboard = () => {
 
           {displayContent === 'activityHistory' && (
             <>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
-              <ActivityHistory activityHistory={activityHistory} />
-              <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
-            </div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                <ActivityHistory activityHistory={activityHistory} />
+                <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
+              </div>
             </>
           )}
 
           {displayContent === 'chart' && ( 
             <>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'><ChartDisplay /></div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'><ChartDisplay /></div>
             </>
-        )}
+          )}
         </div>
       )}
-      <footer className="p-4 bg-blue-400 text-white py-4 mt-16">© Pureform & Pure kids Radiology 2024</footer>
+      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-blue-400 text-white py-4">© Pureform & Pure kids Radiology 2024</footer>
     </div>
   );
 };
