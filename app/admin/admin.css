@@ -1,0 +1,15 @@
+/* 컨테이너 배경 투명도 설정 */
+.transparent-card {
+  background-color: transparent !important;
+  /* !important로 기존 스타일을 덮어씁니다. */
+  box-shadow: 10;
+}
+
+/* 버튼 호버 및 포커스 시 글로우 효과 추가 */
+button:hover,
+button:focus {
+  color: #007bff;
+  /* 버튼의 텍스트 색상 변경 */
+  text-shadow: 0 0 8px rgba(30, 144, 255, 0.8);
+  /* 글로우 효과 */
+}
