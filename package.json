@@ -15,6 +15,7 @@
     "@dicebear/initials": "^8.0.1",
     "@dicebear/personas": "^8.0.1",
     "@material-tailwind/react": "^2.1.9",
+    "@react-google-maps/api": "^2.19.3",
     "chart.js": "^4.4.2",
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-plugin-datalabels": "^2.2.0",
