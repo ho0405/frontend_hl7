@@ -5,6 +5,18 @@ import Link from "next/link";
 import ThemeSwitcher from './ThemeSwitcher';
 import '../../styles/globals.css';
 
+/**
+ * NavvBar is a navigation component that displays links to various pages of the application.
+ * It includes a theme switcher that allows users to toggle between dark and light mode,
+ * affecting the styling of the navigation bar and potentially the entire application.
+ *
+ * The component uses state to keep track of whether dark mode is enabled and applies
+ * appropriate CSS classes based on this state to change the appearance of the navigation bar.
+ *
+ * @component
+ * @returns {React.ReactElement} A navigation bar with theme-switching functionality.
+ */
+
 const NavvBar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false); 
 

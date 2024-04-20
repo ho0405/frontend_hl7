@@ -14,6 +14,18 @@ import {
 import Footer from '../penguinChatbot/footer';
 import './ButtonComponent.css';
 
+/**
+ * HomePage is the main component of the application, featuring user authentication, file upload for conversion,
+ * and display of various conversion-related features. It includes navigation, conversion process handling, and
+ * dynamic theme switching. The page integrates with Firebase for authentication and file handling, provides
+ * progress feedback during the conversion process, and offers a modal for download confirmation.
+ *
+ * @component
+ * @returns {React.ReactElement} Renders the homepage with user authentication, file conversion functionality,
+ * navigation, and feature highlights. Includes a modal for download confirmation and dynamically adjusted
+ * theming based on user preference.
+ */
+
 
 const HomePage = () => {
   const { user, logOut } = UserAuth();

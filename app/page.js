@@ -5,7 +5,20 @@ import Footer from './penguinChatbot/footer';
 import '../styles/globals.css';
 
 
-
+/**
+ * HomePage serves as the main entry view for the application, featuring a typing animation
+ * that dynamically displays a promotional message about the service's capabilities. This page
+ * is designed to welcome users with a striking visual layout that splits the screen into two
+ * main areas: one showcasing the company logo and the animated text, and the other offering
+ * quick access to login and signup options.
+ *
+ * The component utilizes an useEffect hook to manage the typing animation, automatically starting
+ * and resetting it to maintain user engagement. Additionally, it integrates a Footer component for
+ * consistent informational display across the site.
+ *
+ * @returns {React.ReactElement} A component that renders the homepage layout with a typing animation,
+ * login/signup links, and a footer.
+ */
 
 function HomePage() {
   const [typedText, setTypedText] = useState('');

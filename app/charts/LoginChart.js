@@ -2,6 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
+/**
+ * LoginChart is a component that renders a bar chart of login counts over time.
+ * 
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Object[]} props.loginData - An array of login data objects which contain timestamps.
+ * @param {boolean} props.isDarkMode - A flag indicating if the chart should use dark mode styling.
+ * @returns {React.ReactElement} A bar chart visualizing the login counts by date.
+ */
 const LoginChart = ({ loginData, isDarkMode }) => {
   const [loginCountsByDate, setLoginCountsByDate] = useState({});
 

@@ -1,5 +1,14 @@
 import React from 'react';
 
+/**
+ * PhpExample component displays a PHP code snippet demonstrating how to interact with the Convert to HL7 API.
+ * This example includes the use of cURL in PHP to post a PDF file to the API for conversion to HL7 format.
+ * It covers setup, sending the request, and handling responses, including error scenarios.
+ *
+ * @component
+ * @returns {React.ReactElement} A component that displays a preformatted text block containing the PHP code example.
+ */
+
 function PhpExample() {
     const phpCode = `
 // Example of using the Convert to HL7 API with PHP

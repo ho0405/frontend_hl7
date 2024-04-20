@@ -16,6 +16,15 @@ import './admin.css'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TimeScale, TimeSeriesScale);
 
+/**
+ * The AdminDashboard component serves as the main page for administrators, showing different
+ * metrics and charts based on user login/logout and activity data. It fetches historical data
+ * from Firestore and renders it in various chart formats for analysis.
+ *
+ * @component
+ * @returns {React.ReactElement} The rendered component.
+ */
+
 const AdminDashboard = () => {
   const { logOut } = UserAuth();
   const router = useRouter();
@@ -25,6 +34,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [displayContent, setDisplayContent] = useState('dashboard');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const defaultTextColor = 'text-black';
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -67,6 +77,7 @@ const AdminDashboard = () => {
       <nav className={`p-5 shadow-md rounded-lg mt-5 mx-5 ${cardClass}`}>
         <div className="flex justify-between items-center">
           <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4" />
+          <div className={`text-left text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>ADMIN</div>
           <div className="flex items-center space-x-4">
             <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
             <button onClick={handleSignOut} className="px-4 py-2 rounded-md bg-blue-500 text-white transition duration-300 hover:bg-transparent hover:border-blue-500 hover:text-blue-500 border-2 border-transparent">
@@ -79,7 +90,12 @@ const AdminDashboard = () => {
         <ul className="flex justify-center space-x-12">
           {['dashboard', 'loginHistory', 'logoutHistory', 'activityHistory', 'chart'].map(view => (
             <li key={view}>
-              <button onClick={() => setDisplayContent(view)} className={`${displayContent === view ? 'text-blue-500' : 'text-gray-800'} focus:outline-none hover:text-blue-500 focus:text-blue-500`}>
+              <button
+                onClick={() => setDisplayContent(view)}
+                className={`focus:outline-none hover:text-blue-500 focus:text-blue-500 ${
+                  displayContent === view ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-black'
+                }`}
+              >
                 {view.charAt(0).toUpperCase() + view.slice(1).replace(/([A-Z])/g, ' $1')}
               </button>
             </li>
@@ -96,15 +112,15 @@ const AdminDashboard = () => {
               <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
                 <div className="col-span-1 relative">
                   <img src="/images/login.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                  <ChartCard title="Total Logins" count={loginHistory.length} />
+                  <ChartCard title="Total Logins" count={loginHistory.length} isDarkMode={isDarkMode ? 'text-white' : defaultTextColor} />
                 </div>
                 <div className="col-span-1 relative">
                   <img src="/images/time.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                  <ChartCard title="Average Stay Time" count={averageStayTime.toFixed(2)} />
+                  <ChartCard title="Average Stay Time" count={averageStayTime.toFixed(2)} isDarkMode={isDarkMode ? 'text-white' : defaultTextColor} />
                 </div>
                 <div className="col-span-1 relative">
                   <img src="/images/direct-download.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
-                  <ChartCard title="Total Downloads" count={activityHistory.length} />
+                  <ChartCard title="Total Downloads" count={activityHistory.length} isDarkMode={isDarkMode ? 'text-white' : defaultTextColor} />
                 </div>
                 <div className="col-span-1">
                   <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
@@ -121,7 +137,7 @@ const AdminDashboard = () => {
           {displayContent === 'loginHistory' && (
             <>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                <LoginHistory loginHistory={loginHistory} bgClass={bgClass} />
+                <LoginHistory loginHistory={loginHistory} isDarkMode={isDarkMode} />
                 <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
               </div>
             </>
@@ -130,7 +146,7 @@ const AdminDashboard = () => {
           {displayContent === 'logoutHistory' && (
             <>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                <LogoutHistory logoutHistory={logoutHistory} />
+                <LogoutHistory logoutHistory={logoutHistory} isDarkMode={isDarkMode} />
                 <ChartContainer chart={<LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />} />
               </div>
             </>
@@ -139,7 +155,7 @@ const AdminDashboard = () => {
           {displayContent === 'activityHistory' && (
             <>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                <ActivityHistory activityHistory={activityHistory} />
+                <ActivityHistory activityHistory={activityHistory} isDarkMode={isDarkMode} />
                 <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
               </div>
             </>
@@ -147,18 +163,20 @@ const AdminDashboard = () => {
 
           {displayContent === 'chart' && ( 
             <>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'><ChartDisplay /></div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                <ChartDisplay isDarkMode={isDarkMode} />
+              </div>
             </>
           )}
         </div>
       )}
-      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-blue-400 text-white py-4">© Pureform & Pure kids Radiology 2024</footer>
+      <footer className="p-4 bg-blue-400 text-white py-4 mt-16">© Pureform & Pure kids Radiology 2024</footer>
     </div>
   );
 };
 
-const ChartCard = ({ title, count }) => (
-  <div className="p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center">
+const ChartCard = ({ title, count, isDarkMode }) => (
+  <div className={`p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center ${isDarkMode ? 'text-black' : 'text-white'}`}>
     <h2 className="text-lg font-bold text-center">{title}</h2>
     <p className="text-xl">{count}</p>
   </div>
@@ -170,22 +188,22 @@ const ChartContainer = ({ chart }) => (
   </div>
 );
 
-const LoginHistory = ({ loginHistory, bgClass }) => (
+const LoginHistory = ({ loginHistory, isDarkMode }) => (
   <div className="w-full p-5 bg-white rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4">Login History</h2>
+    <h2 className={`text-xl font-semibold mb-4 text-black`}>Login History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-8 py-4 text-left">User Email</th>
-            <th className="px-8 py-4 text-left">Login Time</th>
+            <th className="px-8 py-4 text-left text-black">User Email</th>
+            <th className="px-8 py-4 text-left text-black">Login Time</th>
           </tr>
         </thead>
         <tbody>
           {loginHistory.map((item, index) => (
-            <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} ${bgClass}`}>
-              <td className="px-6 py-4">{item.email}</td>
-              <td className="px-6 py-4">{item.timestamp.toLocaleString()}</td>
+            <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+              <td className="px-6 py-4 text-black">{item.email}</td>
+              <td className="px-6 py-4 text-black">{item.timestamp.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
@@ -194,24 +212,24 @@ const LoginHistory = ({ loginHistory, bgClass }) => (
   </div>
 );
 
-const LogoutHistory = ({ logoutHistory }) => (
+const LogoutHistory = ({ logoutHistory, isDarkMode }) => (
   <div className="w-full p-5 bg-white rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4">Logout History</h2>
+    <h2 className={`text-xl font-semibold mb-4 text-black`}>Logout History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-6 py-4 text-left">Email</th>
-            <th className="px-6 py-4 text-left">Login Time</th>
-            <th className="px-6 py-4 text-left">Logout Time</th>
+            <th className="px-6 py-4 text-left text-black">Email</th>
+            <th className="px-6 py-4 text-left text-black">Login Time</th>
+            <th className="px-6 py-4 text-left text-black">Logout Time</th>
           </tr>
         </thead>
         <tbody>
           {logoutHistory.map((item, index) => (
             <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-              <td className="px-4 py-4">{item.email}</td>
-              <td className="px-4 py-4">{item.loginTime.toLocaleString()}</td>
-              <td className="px-4 py-4">{item.logoutTime.toLocaleString()}</td>
+              <td className="px-4 py-4 text-black">{item.email}</td>
+              <td className="px-4 py-4 text-black">{item.loginTime.toLocaleString()}</td>
+              <td className="px-4 py-4 text-black">{item.logoutTime.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
@@ -220,26 +238,26 @@ const LogoutHistory = ({ logoutHistory }) => (
   </div>
 );
 
-const ActivityHistory = ({ activityHistory }) => (
+const ActivityHistory = ({ activityHistory, isDarkMode }) => (
   <div className="w-full p-5 bg-white rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4">Activity History</h2>
+    <h2 className={`text-xl font-semibold mb-4 text-black`}>Activity History</h2>
     <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-4 text-left">User Email</th>
-            <th className="px-4 py-4 text-left">Activity Type</th>
-            <th className="px-5 py-3 text-left">File Name</th>
-            <th className="px-4 py-3 text-left">Timestamp</th>
+            <th className="px-4 py-4 text-left text-black">User Email</th>
+            <th className="px-4 py-4 text-left text-black">Activity Type</th>
+            <th className="px-5 py-3 text-left text-black">File Name</th>
+            <th className="px-4 py-3 text-left text-black">Timestamp</th>
           </tr>
         </thead>
         <tbody>
           {activityHistory.map((activity, index) => (
             <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-              <td className="px-4 py-3">{activity.userEmail}</td>
-              <td className="pl-6 pr-10 py-3">{activity.activityType}</td>
-              <td className="px-5 py-3">{activity.fileName}</td>
-              <td className="px-4 py-3">{activity.timestamp.toLocaleString()}</td>
+              <td className="px-4 py-3 text-black">{activity.userEmail}</td>
+              <td className="pl-6 pr-10 py-3 text-black">{activity.activityType}</td>
+              <td className="px-5 py-3 text-black">{activity.fileName}</td>
+              <td className="px-4 py-3 text-black">{activity.timestamp.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
@@ -248,9 +266,9 @@ const ActivityHistory = ({ activityHistory }) => (
   </div>
 );
 
-const ChartDisplay = () => (
+const ChartDisplay = ({ isDarkMode }) => (
   <div className="w-full p-5 bg-white rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4">Converted Chart</h2>
+    <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Converted Chart</h2>
     {/* Chart implementation here */}
     <Bar
       data={{

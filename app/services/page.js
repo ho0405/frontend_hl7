@@ -5,6 +5,16 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import Footer from '../penguinChatbot/footer';
 import ServiceItem from '../components/servicespage';
 
+/**
+ * ServicePage serves as a dedicated page to showcase various services offered. It features dynamic theming with a dark mode toggle,
+ * a navigation bar for site-wide navigation, and a footer for additional information. The main content of the page is
+ * rendered using the ServiceItem component, which lists all available services dynamically depending on the dark mode state.
+ *
+ * The dark mode state is managed locally within this component, and the page layout adjusts stylistically based on this state.
+ *
+ * @component
+ * @returns {React.ReactElement} A complete service display page with header, service listing, and footer.
+ */
 
 function ServicePage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state

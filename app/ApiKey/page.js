@@ -1,4 +1,15 @@
 import React from 'react';
+/**
+ * ApiKey component allows users to obtain an API key necessary for using the Conversion API.
+ * It outlines the steps required to create and retrieve an API key from the user dashboard.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <ApiKey />
+ * )
+ */
+
 
 function ApiKey() {
     return (

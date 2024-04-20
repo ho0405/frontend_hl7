@@ -1,5 +1,15 @@
 "use client"
 
+/**
+ * ThemeSwitcher provides a button for toggling between dark and light themes.
+ * It visually changes depending on the current theme state to reflect the toggle action.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {boolean} props.isDarkMode - Indicates if dark mode is currently enabled.
+ * @param {Function} props.toggleDarkMode - Function to toggle the theme mode.
+ * @returns {React.ReactElement} A button that toggles the theme mode when clicked.
+ */
 
 const ThemeSwitcher = ({ isDarkMode, toggleDarkMode }) => {
   return (

@@ -2,6 +2,17 @@ import React from 'react';
 import Link from 'next/link';
 import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
 
+/**
+ * Footer component displays copyright information, a branding statement, and social media links. 
+ * It supports theming and changes its appearance based on whether dark mode is active. 
+ * The component is designed to adaptively show additional content and includes a script for integrating a chatbot.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {boolean} props.isDarkMode - Indicates if the dark mode is enabled.
+ * @returns {React.ReactElement} The footer of the application, containing links, copyright information, 
+ * and an optional script for a chatbot integration.
+ */
 
 const Footer = ({ isDarkMode }) => {
   const footerClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900';

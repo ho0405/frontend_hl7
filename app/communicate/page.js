@@ -5,6 +5,15 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import LiveChatbot from '../chatbot/page'; // Ensure this import path is correct
 import Footer from '../penguinChatbot/footer';
 
+/**
+ * HomePage is the landing component of the application. It sets up the main layout,
+ * including a navigation bar, the main content area featuring a LiveChatbot component, and
+ * a footer. The HomePage also manages the theme state for the application, allowing the
+ * user to switch between dark and light modes.
+ *
+ * @component
+ * @returns {React.ReactElement} The HomePage component with navigation, main content, and footer.
+ */
 
 const HomePage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);

@@ -5,7 +5,17 @@ import ThemeSwitcher from '../components/ThemeSwitcher';
 import ContactCard from '../components/contactcard';
 import Footer from '../penguinChatbot/footer';
 
-
+/**
+ * ConnectPage serves as a contact page within the application. It includes a navigation bar,
+ * a contact card with dynamic theming, and a footer. The page allows users to toggle between dark and light
+ * themes which affects the overall styling of all components on the page.
+ *
+ * The navigation bar provides links to various sections of the site, while the contact card displays
+ * detailed contact information. The footer provides additional links or company information.
+ *
+ * @component
+ * @returns {React.ReactElement} The ConnectPage component which includes navigation, contact information, and footer.
+ */
 function ConnectPage() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 

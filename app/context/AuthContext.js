@@ -3,6 +3,19 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { auth, db } from '../_utils/firebase';
 
+
+/**
+ * Provides a React context for authentication, encapsulating various authentication methods and user state management.
+ * This component uses Firebase to handle user authentication processes such as sign-in with email/password,
+ * Google, GitHub, and Facebook sign-in options. It also tracks the authentication state across the application.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components that can access the authentication context.
+ * @returns {React.ReactElement} A provider component that wraps children with auth context.
+ */
+
+
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {

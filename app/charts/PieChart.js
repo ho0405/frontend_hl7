@@ -2,6 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
+/**
+ * LogoutChart is a component that renders a line chart representing the average stay time
+ * for users during their logged-in sessions.
+ *
+ * It takes logoutData which includes logout times and the time difference of user sessions,
+ * calculates the average stay time per date, and displays this as a line chart.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Object[]} props.logoutData - An array of objects containing logoutTime and timeDifferenceMinutes.
+ * @param {boolean} props.isDarkMode - A boolean flag indicating if the chart should use a dark mode theme.
+ * @returns {React.ReactElement} A Line chart component from react-chartjs-2.
+ */
 
 const PieChart = ({ data, isDarkMode }) => {
   const [chartData, setChartData] = useState({

@@ -1,5 +1,14 @@
 import React from 'react';
 
+/**
+ * Documentation component displays API documentation for users looking to understand how to interact with the Conversion API.
+ * It outlines how to authenticate requests and provides detailed information on API endpoints, including example requests and responses.
+ * This component is designed to be a self-help resource for developers looking to integrate with the API.
+ *
+ * @component
+ * @returns {React.ReactElement} A section of the application dedicated to API documentation, including authentication guidance and endpoint descriptions.
+ */
+
 function Documentation() {
     return (
 <div className="documentation-page">

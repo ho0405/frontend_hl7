@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: chatbot/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: chatbot/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use client"
+import React, { useState, useEffect } from 'react';
+import { db, auth } from '../_utils/firebase';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
+import { createAvatar } from '@dicebear/core';
+import { personas } from '@dicebear/collection';
+import { UserAuth } from '../context/AuthContext';
+/**
+ * LiveChatbot is a component that displays a live chat interface where messages are
+ * fetched in real-time from Firestore, and users can post new messages.
+ *
+ * It uses Firebase for authentication and real-time database operations. It generates
+ * random avatars for users using @dicebear/personas. It handles loading states, message
+ * submission, and message deletion functionality.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {boolean} props.isDarkMode - A boolean flag indicating if the component should use dark mode styles.
+ * @returns {React.ReactElement} A component that renders the chat UI with real-time message updates.
+ */
+
+const LiveChatbot = ({ isDarkMode }) => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { user } = UserAuth();
+
+  useEffect(() => {
+    const q = query(collection(db, 'messages'), orderBy('createdAt'));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const loadedMessages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate().toLocaleString(),
+      }));
+      setMessages(loadedMessages);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // This function generates an SVG avatar string using @dicebear/personas
+  const getRandomAvatar = (userId) => {
+    const options = { seed: userId }; // Customize options as needed
+    const svgAvatar = createAvatar(personas, options);
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svgAvatar)}`;
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (newMessage.trim() === '' || !user) return;
+
+    await addDoc(collection(db, 'messages'), {
+      text: newMessage,
+      createdAt: serverTimestamp(),
+      user: user.email,
+      userId: user.uid,
+    });
+    setNewMessage('');
+  };
+
+  const handleDelete = async messageId => {
+    await deleteDoc(doc(db, 'messages', messageId));
+  };
+
+  const containerClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black';
+  const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
+  const messageClass = isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-black';
+
+  return (
+    &lt;div className={`flex items-center justify-center mt-10 ${containerClass} rounded-lg`}>
+      &lt;div className={`rounded-lg shadow-lg p-3 w-full min-w-lg space-y-6 ${cardClass}`}>
+        {loading &amp;&amp; &lt;p className="text-center">Loading...&lt;/p>}
+        {!loading &amp;&amp; messages.map(({ id, user, text, createdAt, userId }) => (
+          &lt;div key={id} className={`p-2 mb-2 rounded-lg border ${messageClass}`}>
+            &lt;div className="flex justify-between items-center text-sm">
+              &lt;div className="flex items-center">
+                &lt;img src={getRandomAvatar(userId)} alt="User Avatar" className="w-8 h-8 rounded-full mr-2"/>
+                &lt;strong className="font-semibold">{user}&lt;/strong>
+                &lt;span className="ml-2 text-gray-500">{createdAt}&lt;/span>
+              &lt;/div>
+              {userId === auth.currentUser?.uid &amp;&amp; (
+                &lt;button onClick={() => handleDelete(id)} className="text-red-600 hover:text-red-800">
+                  &lt;span className="sr-only">Delete message&lt;/span>🗑️
+                &lt;/button>
+              )}
+            &lt;/div>
+            &lt;p className="mt-2">{text}&lt;/p>
+          &lt;/div>
+        ))}
+        &lt;form onSubmit={handleSubmit} className="pt-2">
+          &lt;textarea
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' &amp;&amp; !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+            className={`w-full p-3 border ${isDarkMode ? 'border-blue-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500`}
+            placeholder="Type your message here..."
+            rows="3"
+          >&lt;/textarea>
+          &lt;button type="submit" className="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Send
+          &lt;/button>
+        &lt;/form>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default LiveChatbot;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdminDashboard">AdminDashboard</a></li><li><a href="global.html#ApiKey">ApiKey</a></li><li><a href="global.html#AuthContext">AuthContext</a></li><li><a href="global.html#ConnectPage">ConnectPage</a></li><li><a href="global.html#ContactCard">ContactCard</a></li><li><a href="global.html#Documentation">Documentation</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#LiveChatbot">LiveChatbot</a></li><li><a href="global.html#LogInPage">LogInPage</a></li><li><a href="global.html#LoginChart">LoginChart</a></li><li><a href="global.html#LogoutChart">LogoutChart</a></li><li><a href="global.html#NavvBar">NavvBar</a></li><li><a href="global.html#PhpExample">PhpExample</a></li><li><a href="global.html#PieChart">PieChart</a></li><li><a href="global.html#ServicePage">ServicePage</a></li><li><a href="global.html#SignUpPage">SignUpPage</a></li><li><a href="global.html#SingleServiceItem">SingleServiceItem</a></li><li><a href="global.html#ThemeSwitcher">ThemeSwitcher</a></li><li><a href="global.html#inter">inter</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 12:09:58 GMT-0600 (Mountain Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

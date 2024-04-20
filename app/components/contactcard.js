@@ -2,6 +2,19 @@ import React from 'react';
 import Link from 'next/link';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
+/**
+ * ContactCard is a component that renders contact information and interactive Google Maps
+ * for multiple locations. It displays a main contact card with general contact details and a series of
+ * cards for each location with specific contact information, operating hours, and a map view.
+ *
+ * Each location card includes a clickable area that directs the user to the company's main website.
+ *
+ * @component
+ * @param {Object} props - React props.
+ * @param {boolean} props.isDarkMode - Indicates if the dark mode styling should be applied.
+ * @returns {React.ReactElement} A set of cards with contact information and embedded Google Maps.
+ */
+
 const ContactCard = ({ isDarkMode }) => {
   const locationsData = [
     {

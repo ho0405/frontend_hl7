@@ -1,0 +1,15 @@
+{
+  "source": {
+    "include": [
+      "app"
+    ],
+    "exclude": [
+      "node_modules"
+    ],
+    "includePattern": ".+\\.(js|jsx)$"
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs/"
+  }
+}

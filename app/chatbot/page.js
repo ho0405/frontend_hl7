@@ -14,7 +14,19 @@ import {
 import { createAvatar } from '@dicebear/core';
 import { personas } from '@dicebear/collection';
 import { UserAuth } from '../context/AuthContext';
-
+/**
+ * LiveChatbot is a component that displays a live chat interface where messages are
+ * fetched in real-time from Firestore, and users can post new messages.
+ *
+ * It uses Firebase for authentication and real-time database operations. It generates
+ * random avatars for users using @dicebear/personas. It handles loading states, message
+ * submission, and message deletion functionality.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {boolean} props.isDarkMode - A boolean flag indicating if the component should use dark mode styles.
+ * @returns {React.ReactElement} A component that renders the chat UI with real-time message updates.
+ */
 
 const LiveChatbot = ({ isDarkMode }) => {
   const [messages, setMessages] = useState([]);

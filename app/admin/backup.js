@@ -12,7 +12,7 @@ import Chart from 'chart.js/auto';
 import LogoutChart from '../charts/LogoutChart';
 import PieChart from '../charts/PieChart';
 import LoginChart from '../charts/LoginChart';
-
+import './admin.css'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TimeScale, TimeSeriesScale);
 
@@ -26,76 +26,24 @@ const AdminDashboard = () => {
   const [displayContent, setDisplayContent] = useState('dashboard');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: 'Conversions',
-        data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-      },
-    ],
-  });
-
-    
   useEffect(() => {
-    setLoading(true);
     const fetchHistory = async () => {
-      try {
-        const loginQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
-        const activityQuery = query(collection(db, 'activityHistory'), orderBy('timestamp', 'desc'));
-        const logoutQuery = query(collection(db, 'logouts'), orderBy('logoutTime', 'desc'));
-        
-        const [loginSnapshot, activitySnapshot, logoutSnapshot] = await Promise.all([
-          getDocs(loginQuery),
-          getDocs(activityQuery),
-          getDocs(logoutQuery),
-        ]);
+      setLoading(true);
+      const loginQuery = query(collection(db, 'logins'), orderBy('timestamp', 'desc'));
+      const activityQuery = query(collection(db, 'activityHistory'), orderBy('timestamp', 'desc'));
+      const logoutQuery = query(collection(db, 'logouts'), orderBy('logoutTime', 'desc'));
+      
+      const [loginSnapshot, activitySnapshot, logoutSnapshot] = await Promise.all([
+        getDocs(loginQuery),
+        getDocs(activityQuery),
+        getDocs(logoutQuery),
+      ]);
 
-        const loginData = loginSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          timestamp: doc.data().timestamp.toDate(),
-        }));
-
-        const activityData = activitySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          timestamp: doc.data().timestamp.toDate(),
-        }));
-
-        const logoutData = logoutSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          loginTime: doc.data().loginTime.toDate(),
-          logoutTime: doc.data().logoutTime.toDate(),
-          timeDifferenceMinutes: doc.data().timeDifferenceMinutes,
-        }));
-
-        setLoginHistory(loginData);
-        setActivityHistory(activityData);
-        setLogoutHistory(logoutData);
-
-        const conversionCounts = activityData.reduce((acc, { userEmail }) => {
-          acc[userEmail] = (acc[userEmail] || 0) + 1;
-          return acc;
-        }, {});
-
-        setChartData({
-          labels: Object.keys(conversionCounts),
-          datasets: [{
-            label: 'Conversions',
-            data: Object.values(conversionCounts),
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          }]
-        });
-
-      } catch (error) {
-        console.error('Failed to fetch history:', error);
-      } finally {
-        setLoading(false);
-      }
+      setLoginHistory(loginSnapshot.docs.map(doc => ({ ...doc.data(), timestamp: doc.data().timestamp.toDate() })));
+      setActivityHistory(activitySnapshot.docs.map(doc => ({ ...doc.data(), timestamp: doc.data().timestamp.toDate() })));
+      setLogoutHistory(logoutSnapshot.docs.map(doc => ({ ...doc.data(), loginTime: doc.data().loginTime.toDate(), logoutTime: doc.data().logoutTime.toDate() })));
+      
+      setLoading(false);
     };
 
     fetchHistory();
@@ -109,218 +57,223 @@ const AdminDashboard = () => {
       console.error('Logout failed', error);
     }
   };
-
-  const handleDisplay = type => setDisplayContent(type);
+  const averageStayTime = logoutHistory.reduce((acc, { timeDifferenceMinutes }) => acc + timeDifferenceMinutes, 0) / logoutHistory.length;
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-
   const bgClass = isDarkMode ? 'bg-gray-800 text-white' : 'bg-gradient-to-r from-blue-300 to-purple-300 text-black';
-  const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black';
+  const cardClass = isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black shadow-lg rounded-lg';
 
   return (
     <div className={`flex flex-col min-h-screen ${bgClass}`}>
-      <nav className={`p-4 shadow-md rounded-lg mt-4 mx-10 ${cardClass}`}>
+      <nav className={`p-5 shadow-md rounded-lg mt-5 mx-5 ${cardClass}`}>
         <div className="flex justify-between items-center">
           <img src="images/logo.png" alt="Logo" className="h-12 w-28 mr-4" />
           <div className="flex items-center space-x-4">
+            <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
             <button onClick={handleSignOut} className="px-4 py-2 rounded-md bg-blue-500 text-white transition duration-300 hover:bg-transparent hover:border-blue-500 hover:text-blue-500 border-2 border-transparent">
               Sign Out
             </button>
-            <ThemeSwitcher isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
           </div>
         </div>
       </nav>
-      <div className={`p-4 shadow-md rounded-lg mx-10 mt-4 w-100 ${cardClass}`}>
-        <ul className="flex justify-center space-x-6">
-          <li>
-            <button onClick={() => handleDisplay('dashboard')} className={`${displayContent === 'dashboard' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Dashboard
-            </button>
-          </li>
-          <li>
-            <button onClick={() => handleDisplay('loginHistory')} className={`${displayContent === 'loginHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Login History
-            </button>
-          </li>
-          <li>
-            <button onClick={() => handleDisplay('logoutHistory')} className={`${displayContent === 'logoutHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Logout History
-            </button>
-          </li>
-          <li>
-            <button onClick={() => handleDisplay('activityHistory')} className={`${displayContent === 'activityHistory' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Activity History
-            </button>
-          </li>
-          <li>
-            <button onClick={() => handleDisplay('chart')} className={`${displayContent === 'chart' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Conversion Chart
-            </button>
-          </li>
-          <li>
-            <button onClick={() => handleDisplay('pieChart')} className={`${displayContent === 'pieChart' ? 'text-blue-500' : isDarkMode ? 'text-white' : 'text-gray-800'} focus:outline-none`}>
-              Pie Chart
-            </button>
-          </li>
+      <div className={`p-4 shadow-md mx-5 w-100 transparent-card ${cardClass}`}>
+        <ul className="flex justify-center space-x-12">
+          {['dashboard', 'loginHistory', 'logoutHistory', 'activityHistory', 'chart'].map(view => (
+            <li key={view}>
+              <button onClick={() => setDisplayContent(view)} className={`${displayContent === view ? 'text-blue-500' : 'text-gray-800'} focus:outline-none hover:text-blue-500 focus:text-blue-500`}>
+                {view.charAt(0).toUpperCase() + view.slice(1).replace(/([A-Z])/g, ' $1')}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
 
-      <div className=" mx-auto px-4 min-h-screen flex justify-center items-center">
-
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <div className={`flex flex-wrap p-8 m-4 rounded-lg shadow-lg animate-fade-in ${cardClass}`}>
-            <div>
-              {displayContent === 'dashboard' && (
-                <>
-                  <div className="flex flex-wrap justify-center">
-                    <div className="bg-white-500 text-black text-center py-2 px-4 rounded-lg font-bold text-lg">
-                      Total Logins: {loginHistory.length}
-                    </div>
-                    <div className="bg-white-500 text-black text-center py-2 px-4 rounded-lg font-bold text-lg">
-                      Total Downloads: {activityHistory.length}
-                    </div>
-                    {/* <div className="bg-white text-black text-center py-2 px-4 rounded-lg font-bold text-lg">
-                      New Signups: {newSignupCount}
-                    </div> */}
-                    <div className="mr-4">
-                      <LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />
-                    </div>
-                    <div className="mr-4">
-                      <LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />
-                    </div>
-                    <div>
-                      <PieChart data={activityHistory} isDarkMode={isDarkMode} />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-            
-            <div className="lg:w-1/2 lg:pr-4">
-              {displayContent === 'loginHistory' && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Login History</h2>  
-                  <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
-                    <table className="w-full border-collapse border border-gray-300">   
-                      <thead>
-                        <tr className="bg-gray-200">
-                          <th className="px-8 py-4 text-left">User Email</th>
-                          <th className="px-8 py-4 text-left">Login Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {loginHistory.map((item, index) => (
-                          <tr key={index} className={`${index % 2 === 0 ? 'dark:bg-gray-700' : 'dark:bg-gray-800'} ${bgClass}`}>
-                            <td className="border border-gray-300 px-8 py-6">{item.email}</td>
-                            <td className="border border-gray-300 px-8 py-6">{item.timestamp.toLocaleString()}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+      {loading ? (
+        <div className="mx-auto px-5 min-h-screen flex justify-center items-center">Loading...</div>
+      ) : (
+        <div className="m-5 py-5">
+          {displayContent === 'dashboard' && (
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
+                <div className="col-span-1 relative">
+                  <img src="/images/login.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Total Logins" count={loginHistory.length} />
                 </div>
-              )}
-            </div>
-            <div className="lg:w-1/2 lg:pl-4">
-              {displayContent === 'loginHistory' && (
-                <LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />
-              )}
-            </div>
-                  
-
-            
-            {displayContent === 'logoutHistory' && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Logout History</h2>
-                
-                <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
-                  <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-200">
-                        <th className="px-8 py-4 text-left">Email</th>
-                        <th className="px-8 py-4 text-left">Login Time</th>
-                        <th className="px-8 py-4 text-left">Logout Time</th>
-                        <th className="px-8 py-4 text-left">Duration (minutes)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {logoutHistory.map((item, index) => (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                          <td className="border border-gray-300 px-8 py-6">{item.email}</td>
-                          <td className="border border-gray-300 px-8 py-6">{item.loginTime.toLocaleString()}</td>
-                          <td className="border border-gray-300 px-8 py-6">{item.logoutTime.toLocaleString()}</td>
-                          <td className="border border-gray-300 px-8 py-6">{item.timeDifferenceMinutes.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="col-span-1 relative">
+                  <img src="/images/time.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Average Stay Time" count={averageStayTime.toFixed(2)} />
                 </div>
-                {displayContent === 'logoutHistory' && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Logout History</h2>
-                  
-                  <LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />
+                <div className="col-span-1 relative">
+                  <img src="/images/direct-download.png" alt="Login Icon" className="absolute z-10 w-20 h-20 m-2" />
+                  <ChartCard title="Total Downloads" count={activityHistory.length} />
                 </div>
-              )}
-              </div>
-            )}
-
-
-
-            {displayContent === 'activityHistory' && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Activity History</h2>
-                <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
-                  <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-200">
-                        <th className="px-8 py-4 text-left">User Email</th>
-                        <th className="px-8 py-4 text-left">Activity Type</th>
-                        <th className="px-8 py-4 text-left">File Name</th>
-                        <th className="px-8 py-4 text-left">Timestamp</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activityHistory.map((activity, index) => (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                          <td className="border border-gray-300 px-8 py-6">{activity.userEmail}</td>
-                          <td className="border border-gray-300 px-8 py-6">{activity.activityType}</td>
-                          <td className="border border-gray-300 px-8 py-6">{activity.fileName}</td>
-                          <td className="border border-gray-300 px-8 py-6">{activity.timestamp.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="col-span-1">
+                  <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
+                </div>
+                <div className="col-span-1">
+                  <ChartContainer chart={<LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />} />
+                </div>
+                <div className="col-span-1">
+                  <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
                 </div>
               </div>
-            )}
-          
-            {displayContent === 'chart' && (
-            <div className="chart-container max-w-lg" style={{ height: '400px', width: '100%' }}>
-              <Bar
-                data={{
-                  ...chartData,
-                  datasets: [{
-                    ...chartData.datasets[0],
-                    backgroundColor: isDarkMode ? 'rgba(255, 255,0, 1)' : 'rgba(54, 162, 235,12 )',
-                  }],
-                }}
-                options={{ maintainAspectRatio: false }}
-              />
-            </div>
-            )}
-            
-            {displayContent === 'pieChart' && (
-              <PieChart data={activityHistory} isDarkMode={isDarkMode} />
-            )}
-          </div>
-        )}
-      </div>
-      <footer className="p-4 bg-blue-400 text-white py-4 mt-16">© Pureform & Pure kids Radiology 2024</footer>
+            </>
+          )}
+          {displayContent === 'loginHistory' && (
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                <LoginHistory loginHistory={loginHistory} bgClass={bgClass} />
+                <ChartContainer chart={<LoginChart loginData={loginHistory} isDarkMode={isDarkMode} />} />
+              </div>
+            </>
+          )}
+
+          {displayContent === 'logoutHistory' && (
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                <LogoutHistory logoutHistory={logoutHistory} />
+                <ChartContainer chart={<LogoutChart logoutData={logoutHistory} isDarkMode={isDarkMode} />} />
+              </div>
+            </>
+          )}
+
+          {displayContent === 'activityHistory' && (
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                <ActivityHistory activityHistory={activityHistory} />
+                <ChartContainer chart={<PieChart data={activityHistory} isDarkMode={isDarkMode} />} />
+              </div>
+            </>
+          )}
+
+          {displayContent === 'chart' && ( 
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'><ChartDisplay /></div>
+            </>
+          )}
+        </div>
+      )}
+      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-blue-400 text-white py-4">© Pureform & Pure kids Radiology 2024</footer>
     </div>
   );
 };
 
+const ChartCard = ({ title, count }) => (
+  <div className="p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center">
+    <h2 className="text-lg font-bold text-center">{title}</h2>
+    <p className="text-xl">{count}</p>
+  </div>
+);
+
+const ChartContainer = ({ chart }) => (
+  <div className="p-5 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center w-full">
+    {chart}
+  </div>
+);
+
+const LoginHistory = ({ loginHistory, bgClass }) => (
+  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+    <h2 className="text-xl font-semibold mb-4">Login History</h2>
+    <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-8 py-4 text-left">User Email</th>
+            <th className="px-8 py-4 text-left">Login Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loginHistory.map((item, index) => (
+            <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} ${bgClass}`}>
+              <td className="px-6 py-4">{item.email}</td>
+              <td className="px-6 py-4">{item.timestamp.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const LogoutHistory = ({ logoutHistory }) => (
+  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+    <h2 className="text-xl font-semibold mb-4">Logout History</h2>
+    <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-6 py-4 text-left">Email</th>
+            <th className="px-6 py-4 text-left">Login Time</th>
+            <th className="px-6 py-4 text-left">Logout Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logoutHistory.map((item, index) => (
+            <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+              <td className="px-4 py-4">{item.email}</td>
+              <td className="px-4 py-4">{item.loginTime.toLocaleString()}</td>
+              <td className="px-4 py-4">{item.logoutTime.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const ActivityHistory = ({ activityHistory }) => (
+  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+    <h2 className="text-xl font-semibold mb-4">Activity History</h2>
+    <div className="overflow-x-auto overflow-y-auto max-h-96 mt-4">
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-4 py-4 text-left">User Email</th>
+            <th className="px-4 py-4 text-left">Activity Type</th>
+            <th className="px-5 py-3 text-left">File Name</th>
+            <th className="px-4 py-3 text-left">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {activityHistory.map((activity, index) => (
+            <tr key={index} className={`border border-gray-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+              <td className="px-4 py-3">{activity.userEmail}</td>
+              <td className="pl-6 pr-10 py-3">{activity.activityType}</td>
+              <td className="px-5 py-3">{activity.fileName}</td>
+              <td className="px-4 py-3">{activity.timestamp.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const ChartDisplay = () => (
+  <div className="w-full p-5 bg-white rounded-lg shadow-lg">
+    <h2 className="text-xl font-semibold mb-4">Converted Chart</h2>
+    {/* Chart implementation here */}
+    <Bar
+      data={{
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Test Data',
+          data: [6, 18, 36, 69, 0],
+          backgroundColor: 'rgba(75,192,192,1)',
+          borderColor: 'rgba(0,0,0,1)',
+          borderWidth: 1,
+        }]
+      }}
+      options={{
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }}
+    />
+  </div>
+);
+
 export default AdminDashboard;
-          
